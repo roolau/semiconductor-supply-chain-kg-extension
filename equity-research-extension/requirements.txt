@@ -9,5 +9,3 @@ openai
 yfinance
 # tests
 pytest
-# optional: KG embeddings in run_modules.ipynb
-# pykeen
