@@ -7,7 +7,6 @@ Scorers, each fitted on a TRAINING graph only (held-out edges never touch peers,
   product      product peers: companies that make what you make; their customers
   stage        P(customer stage | your stage) from stage-to-stage supply links     (value-chain view)
   ecosystem    1 if the candidate is in your Louvain community
-  embedding    PyKEEN RotatE on the whole KG minus held-out edges (optional: needs `pip install pykeen`)
   hybrid       reciprocal-rank fusion of the scorers above, then the soft product gate
 Product gate: fail -> dropped, unknown -> kept (products.py). Every recommendation carries its evidence paths.
 """
@@ -31,7 +30,7 @@ RRF_K = 10  # reciprocal-rank fusion constant: small, so a top-3 rank from one s
 
 class Recommender:
     def __init__(self, kg: KG, supply: set[tuple[str, str]], products: Products | None = None,
-                 direction: str = "customers", embedding: bool = False, seed: int = 0, peer_product: bool = True):
+                 direction: str = "customers", peer_product: bool = True):
         """direction='customers': recommend customers for a supplier; 'suppliers': the reverse."""
         self.kg, self.direction, self.peer_product = kg, direction, peer_product
         self.P = products or Products(kg)
@@ -52,9 +51,6 @@ class Recommender:
         for (la, _), k in flows.items():
             tot[la] += k
         self.stage_p = {(la, lb): k / tot[la] for (la, lb), k in flows.items()}
-        self.emb = None
-        if embedding:
-            self.emb = Embedding(kg, self.train, seed=seed)
 
     # ---------------- scorers: arrays over self.nodes ----------------
     def popularity(self, a: str) -> np.ndarray:
@@ -106,11 +102,6 @@ class Recommender:
         e = self.eco.get(a)
         return np.array([float(e is not None and self.eco.get(n) == e) for n in self.nodes])
 
-    def embedding(self, a: str) -> np.ndarray:
-        if self.emb is None:
-            return np.zeros(len(self.nodes))
-        return self.emb.scores(a, self.nodes, self.direction)
-
     def gate(self, a: str) -> np.ndarray:
         """1 pass, 0.5 unknown, 0 fail (supplier makes nothing the customer buys)."""
         out = np.empty(len(self.nodes))
@@ -120,10 +111,10 @@ class Recommender:
             out[i] = {"pass": 1.0, "unknown": 0.5, "fail": 0.0}[st]
         return out
 
-    SCORERS = ("popularity", "peers", "product", "stage", "ecosystem", "embedding")
+    SCORERS = ("popularity", "peers", "product", "stage", "ecosystem")
     # stage left out: 16 Nov ablation (5 seeds) hybrid MRR 0.258 with stage vs 0.248 without for customers, 0.310 vs
     # 0.313 for suppliers, and Hits@10 better without it in both. It stays in the explanations and the map.
-    HYBRID = ("peers", "product", "embedding", "popularity")
+    HYBRID = ("peers", "product", "popularity")
 
     def hybrid(self, a: str, parts=HYBRID) -> np.ndarray:
         s = np.zeros(len(self.nodes))
@@ -201,47 +192,6 @@ class Recommender:
         return out or ["Popular buyer: no closer evidence path."]
 
 
-class Embedding:
-    """PyKEEN RotatE on all fused triples except held-out SUPPLIES_TO edges."""
-
-    def __init__(self, kg: KG, train_supply: set, dim: int = 64, epochs: int = 400, seed: int = 0):
-        # 16 Nov, one split: 150 epochs MRR 0.095, 400 epochs 0.154 (dim 64), dim 128 / 300 epochs 0.151
-        from pykeen.models import RotatE
-        from pykeen.training import SLCWATrainingLoop
-        from pykeen.triples import TriplesFactory
-        import torch
-        torch.manual_seed(seed)
-        triples = []
-        for e in kg.edges:
-            if e["relation"] == "SUPPLIES_TO" and (e["subject"], e["object"]) not in train_supply:
-                continue  # held out (or not company-company)
-            triples.append((e["subject"], e["relation"], e["object"]))
-        self.tf = TriplesFactory.from_labeled_triples(np.array(triples, dtype=str))
-        self.model = RotatE(triples_factory=self.tf, embedding_dim=dim, random_seed=seed)
-        opt = torch.optim.Adam(self.model.parameters(), lr=0.01)
-        SLCWATrainingLoop(model=self.model, triples_factory=self.tf, optimizer=opt).train(
-            triples_factory=self.tf, num_epochs=epochs, batch_size=256, use_tqdm=False)
-        self.rel = self.tf.relation_to_id["SUPPLIES_TO"]
-
-    def scores(self, a: str, nodes: list[str], direction: str) -> np.ndarray:
-        import torch
-        e2i = self.tf.entity_to_id
-        out = np.full(len(nodes), -1e9)
-        if a not in e2i:
-            return np.zeros(len(nodes))
-        known = [(i, e2i[n]) for i, n in enumerate(nodes) if n in e2i]
-        ids = torch.tensor([j for _, j in known])
-        me = torch.full_like(ids, e2i[a])
-        rel = torch.full_like(ids, self.rel)
-        hrt = torch.stack([me, rel, ids], 1) if direction == "customers" else torch.stack([ids, rel, me], 1)
-        with torch.no_grad():
-            s = self.model.score_hrt(hrt).squeeze(-1).numpy()
-        for (i, _), v in zip(known, s):
-            out[i] = v
-        out = out - out[out > -1e9].min() + 1e-3 if (out > -1e9).any() else np.zeros(len(nodes))
-        out[out < 0] = 0
-        return out
-
 
 # ---------------- evaluation: masked-edge holdout ----------------
 def split(supply: set, frac: float = 0.2, seed: int = 0) -> tuple[set, set]:
@@ -262,10 +212,10 @@ def split(supply: set, frac: float = 0.2, seed: int = 0) -> tuple[set, set]:
 
 
 def evaluate(kg: KG, seeds=(0, 1, 2, 3, 4), frac: float = 0.2, direction: str = "customers",
-             embedding: bool = False, methods=None) -> dict:
+             methods=None) -> dict:
     """Filtered ranking: each held-out (A, D) is ranked among all companies that are not A's other known partners."""
-    methods = methods or (["popularity", "peers", "product", "stage", "ecosystem"] + (["embedding"] if embedding else [])
-                          + ["hybrid"] + [f"hybrid-{x}" for x in Recommender.HYBRID if embedding or x != "embedding"]
+    methods = methods or (["popularity", "peers", "product", "stage", "ecosystem"]
+                          + ["hybrid"] + [f"hybrid-{x}" for x in Recommender.HYBRID]
                           + ["hybrid_with_stage", "hybrid_with_ecosystem"])
     P = Products(kg)
     supply = kg.supply_edges()
@@ -273,7 +223,7 @@ def evaluate(kg: KG, seeds=(0, 1, 2, 3, 4), frac: float = 0.2, direction: str = 
     per_lane = defaultdict(lambda: defaultdict(list))
     for seed in seeds:
         train, test = split(supply, frac, seed)
-        R = Recommender(kg, train, P, direction, embedding=embedding, seed=seed)
+        R = Recommender(kg, train, P, direction)
         if direction == "suppliers":
             test = {(b, a) for a, b in test}
         all_pos = defaultdict(set)
@@ -306,14 +256,13 @@ def evaluate(kg: KG, seeds=(0, 1, 2, 3, 4), frac: float = 0.2, direction: str = 
             "methods": summary, "hybrid_gate_hits10_by_stage": lanes}
 
 
-def build(kg: KG, out_dir, embedding: bool = False, examples=("company_008", "company_002", "company_011")) -> dict:
-    """embedding=True trains RotatE once per split (about 100 s each on CPU): 3 seeds instead of 5."""
+def build(kg: KG, out_dir, examples=("company_008", "company_002", "company_011")) -> dict:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    seeds = (0, 1, 2) if embedding else (0, 1, 2, 3, 4)
-    report = {"customers": evaluate(kg, seeds, direction="customers", embedding=embedding),
-              "suppliers": evaluate(kg, seeds, direction="suppliers", embedding=embedding)}
-    full = Recommender(kg, kg.supply_edges(), direction="customers", embedding=embedding)
+    seeds = (0, 1, 2, 3, 4)
+    report = {"customers": evaluate(kg, seeds, direction="customers"),
+              "suppliers": evaluate(kg, seeds, direction="suppliers")}
+    full = Recommender(kg, kg.supply_edges(), direction="customers")
     report["examples"] = {kg.name(c): full.recommend(c, 5) for c in examples if c in full.idx}
     (out / "recommender_report.json").write_text(json.dumps(report, indent=1, ensure_ascii=False), encoding="utf-8")
     return report

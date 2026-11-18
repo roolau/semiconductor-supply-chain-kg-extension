@@ -499,10 +499,8 @@ function recResult() {
   const NAMES = [['hybrid+gate', 'Hybrid (with product gate)'], ['hybrid', 'Hybrid, no gate'], ['hybrid-peers', '  without similar companies'], ['hybrid-product', '  without product peers'],
     ['hybrid-popularity', '  without popularity'], ['hybrid_with_stage', '  plus value-chain stage'], ['hybrid_with_ecosystem', '  plus ecosystem'],
     ['peers', 'Similar companies alone'], ['product', 'Product peers alone'], ['popularity', 'Popularity (baseline)'], ['stage', 'Stage alone'], ['ecosystem', 'Ecosystem alone']];
-  const emb = P2.emb || {};
   document.getElementById('t-rec').innerHTML = `<div class="tbl-wrap"><table class="mtbl"><thead><tr><th>Method</th><th class="num">Customers</th><th class="num">Suppliers</th></tr></thead><tbody>${NAMES.map(([k, l]) =>
-    `<tr class="${k === 'hybrid+gate' ? 'best' : k === 'popularity' ? 'base' : ''}"><td style="white-space:pre">${esc(l)}</td><td class="num">${ec.methods[k] ? ec.methods[k].MRR.toFixed(3) : '—'}</td><td class="num">${es.methods[k] ? es.methods[k].MRR.toFixed(3) : '—'}</td></tr>`).join('')}
-    ${emb.customers ? `<tr><td>KG embeddings alone (RotatE, 3 splits)</td><td class="num">${emb.customers.embedding.toFixed(3)}</td><td class="num">${emb.suppliers.embedding.toFixed(3)}</td></tr><tr><td>Hybrid plus embeddings (3 splits)</td><td class="num">${emb.customers.hybrid.toFixed(3)}</td><td class="num">${emb.suppliers.hybrid.toFixed(3)}</td></tr>` : ''}</tbody></table></div>`;
+    `<tr class="${k === 'hybrid+gate' ? 'best' : k === 'popularity' ? 'base' : ''}"><td style="white-space:pre">${esc(l)}</td><td class="num">${ec.methods[k] ? ec.methods[k].MRR.toFixed(3) : '—'}</td><td class="num">${es.methods[k] ? es.methods[k].MRR.toFixed(3) : '—'}</td></tr>`).join('')}</tbody></table></div>`;
   const C = P2.clusters, frac = (x, lab, alt) => ({ label: `${lab} (${x.covered} of ${x.graded})`, v: (x.accuracy_on_covered || 0) * 100, n: `${x.correct}/${x.covered}`, alt });
   bars(document.getElementById('b-clu'), [frac(C.role.rule_products, 'Role from products'), frac(C.role.unsupervised_ward_k, 'Role, unsupervised clustering', true),
     frac(C.stage.from_products, 'Stage from products'), frac(C.stage.phase1_llm_stage_baseline, 'Stage, Phase 1 labels', true),

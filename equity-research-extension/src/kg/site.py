@@ -44,7 +44,7 @@ def load_finance(path) -> dict | None:
     return snap
 
 
-def p2_data(kg: KG, embedding_results: dict | None = None, finance_snapshot=None) -> dict:
+def p2_data(kg: KG, finance_snapshot=None) -> dict:
     m = viz.data(kg)
     recs = {}
     for direction in ("customers", "suppliers"):
@@ -68,7 +68,7 @@ def p2_data(kg: KG, embedding_results: dict | None = None, finance_snapshot=None
     return {"map": m, "recs": recs, "lanes": LANES, "cat_label": LABEL,
             "eval": {d: {"methods": ev[d]["methods"], "test_edges": ev[d]["test_edges_per_seed"][0],
                          "seeds": len(ev[d]["seeds"]), "by_stage": ev[d]["hybrid_gate_hits10_by_stage"]} for d in ev},
-            "emb": embedding_results or {}, "clusters": clu["evaluation"], "fin": load_finance(finance_snapshot),
+            "clusters": clu["evaluation"], "fin": load_finance(finance_snapshot),
             "eval_comp": evaluate_competitors(kg),
             "flows": C.lane_flows(), "sold": sold_data(kg),
             "itemcat": {i: c for i, c in item_categories(kg).items() if c},
@@ -112,10 +112,10 @@ def qa_data(qa_results=None, qa_report=None) -> dict:
     return {"prompt": [head, tail], "examples": examples, "eval": ev}
 
 
-def build(phase1_html, kg: KG, out_path, embedding_results: dict | None = None, finance_snapshot=None,
+def build(phase1_html, kg: KG, out_path, finance_snapshot=None,
           qa_results=None, qa_report=None) -> Path:
     html = Path(phase1_html).read_text(encoding="utf-8")
-    p2 = p2_data(kg, embedding_results, finance_snapshot)
+    p2 = p2_data(kg, finance_snapshot)
     p2["qa"] = qa_data(qa_results, qa_report)
     data = json.dumps(p2, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     tpl = Path(__file__).with_name("site_parts.html").read_text(encoding="utf-8")
