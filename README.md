@@ -1,10 +1,20 @@
-# Semiconductor Supply-Chain Knowledge Graph
+# Semiconductor Supply-Chain Knowledge Graph: Equity Research Extension
 
-A research dataset of semiconductor supply-chain relationships derived from Wikipedia and SEC filings. It connects companies to offerings, suppliers, customers, subsidiaries, partners, locations and supply-chain stages, with links to supporting source documents.
+> **About this fork.** This repository extends the [Phase 1 knowledge graph](https://github.com/hchannni/semiconductor-supply-chain-kg) with four modules for equity analysts: product flows, clustering, relation prediction and question answering over the graph (KGQA), plus an interactive website. The graph data is unchanged.
+>
+> - Code, results and how to run: [`equity-research-extension/`](equity-research-extension/)
+> - Live site: [full version (claude.ai)](https://claude.ai/artifact/GtFG9W1vcjjLKvkJPrD6LV) · [mirror (GitHub Pages)](https://roolau.github.io/semiconductor-supply-chain-kg-extension/)
+>
+> Everything below is the original dataset documentation.
+
+---
+
+A research dataset of semiconductor supply-chain relationships derived from Wikipedia and SEC filings. …
 
 **Data snapshot:** 2026-10-13 · **Package date:** 2026-10-14
 
 ## Dataset overview
+…
 
 | Item | Count |
 |---|---:|
