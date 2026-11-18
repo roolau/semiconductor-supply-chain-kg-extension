@@ -1,0 +1,1097 @@
+Patches applied by site.py to the Phase 1 page. Each block: "@@@ <before|after|replace> <anchor>" then the text.
+The anchor must occur in the Phase 1 page; "\n" in an anchor stands for a line break.
+
+@@@ replace <title>Semiconductor Supply Chain Graph</title>
+<title>Semiconductor Supply Chain Knowledge Graph for Equity Research</title>
+@@@ before </style>\n\n<header class="appbar">
+/* ---------- Phase 2 additions */
+:root { --pred: #8a3ffc; --pred-soft: #f3edff; --pred-ink: #5b1fb5 }
+.p2tag { font-size: 12px; padding: 1px 8px; border-radius: 4px; background: var(--brand-soft); color: var(--brand-ink); border: 1px solid #c7dcf2 }
+.predtag { font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 4px; background: var(--pred-soft); color: var(--pred-ink); border: 1px solid #d6c4fb }
+.lg-line.pred { border-top: 2px dashed var(--pred) }
+.lg-line.comp { border-top: 2px dotted var(--comp) }
+.toggle label { display: inline-flex; gap: 4px; align-items: center; font-weight: 600 }
+.toggle label.comp { color: var(--comp) }
+.rel-sec.comp h3 { color: var(--comp) }
+.whys.comp li { border-left-color: var(--comp) }
+.toggle { display: inline-flex; gap: 6px; align-items: center; padding: 3px 10px 3px 8px; border: 1px solid #d6c4fb; border-radius: 4px; background: var(--pred-soft); color: var(--pred-ink); font-weight: 600; cursor: pointer }
+.toggle input { accent-color: var(--pred) }
+.rel-sec.pred h3 { color: var(--pred-ink) }
+.rel-sec.pred table tbody tr[aria-selected="true"] td { background: var(--pred-soft) }
+.pred-note { font-size: 12.5px; color: var(--pred-ink); background: var(--pred-soft); border: 1px solid #d6c4fb; border-radius: 4px; padding: 8px 12px; margin: 10px 0 0 }
+.whys { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px }
+.whys li { border: 1px solid var(--line); border-left: 3px solid var(--pred); border-radius: 4px; padding: 8px 12px; font-size: 13.5px }
+.whys li b.k { display: block; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 2px }
+.rank { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px }
+/* clusters tab */
+.cm-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start }
+@media (max-width: 980px) { .cm-wrap { grid-template-columns: minmax(0, 1fr) } }
+.cm-box { position: relative; border: 1px solid var(--line); border-radius: 4px; background: var(--graph-bg); overflow: hidden; margin-top: 12px }
+#cm-svg { display: block; width: 100%; height: 640px; cursor: grab }
+@media (max-width: 600px) { #cm-svg { height: 440px } }
+#cm-svg:active { cursor: grabbing }
+.cm-side { display: grid; gap: 12px }
+.cm-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 12px; color: var(--ink-2) }
+.cm-legend span { display: flex; gap: 6px; align-items: center; min-width: 0 }
+.cm-legend i { width: 10px; height: 10px; border-radius: 50%; flex: none }
+.cm-legend i.hollow { background: transparent !important; border: 2px solid; width: 6px; height: 6px }
+.cm-detail ul { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 12.5px }
+.cm-detail .nm2 { font-weight: 600; font-size: 15px }
+.aliases .open { font: inherit; font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--brand); border-radius: 4px; padding: 1px 8px; margin: 2px 2px 2px 0; cursor: pointer }
+.aliases .open:hover { border-color: var(--brand); text-decoration: none }
+.nmb { font: inherit; background: none; border: 0; padding: 0; color: var(--brand); cursor: pointer }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+.xbtn { font: inherit; font-size: 18px; line-height: 1; width: 32px; height: 32px; border-radius: 6px; border: 0; background: none; color: var(--ink-2); cursor: pointer }
+.xbtn:hover { background: var(--surface-2); color: var(--ink) }
+.sheet-bg { position: fixed; inset: 0; background: rgba(5,8,12,.55); z-index: 40; animation: fadein .18s ease-out }
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(760px, 100%); background: var(--canvas); border-left: 1px solid var(--line-strong); box-shadow: -12px 0 40px rgba(0,0,0,.45); z-index: 41; overflow: auto; transform: translateX(24px); opacity: 0; transition: transform .18s ease-out, opacity .18s ease-out }
+.sheet.in { transform: none; opacity: 1 }
+.sheet-h { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 10px 14px 10px 20px; background: rgba(11,15,21,.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line) }
+.sheet-act { display: flex; gap: 6px; align-items: center }
+.sheet #dash { padding: 16px 20px 40px }
+.sheet .dgrid { grid-template-columns: 1fr }
+.sheet .tiles { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) }
+body.sheet-open { overflow: hidden }
+@keyframes fadein { from { opacity: 0 } }
+.fab { position: fixed; right: 22px; bottom: 22px; z-index: 30; display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 999px; border: 0; background: var(--brand); color: var(--on-brand, #04121f); font: inherit; font-weight: 700; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,.45) }
+.fab:hover { filter: brightness(1.08) }
+.fab[aria-expanded="true"] { display: none }
+.ask { position: fixed; right: 22px; bottom: 22px; z-index: 31; width: min(440px, calc(100vw - 24px)); height: min(640px, calc(100vh - 44px)); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: 0 18px 50px rgba(0,0,0,.55); overflow: hidden; animation: askin .18s ease-out }
+.ask[hidden] { display: none }
+@keyframes askin { from { opacity: 0; transform: translateY(12px) } }
+.ask-h { display: flex; align-items: center; justify-content: space-between; padding: 10px 10px 10px 16px; border-bottom: 1px solid var(--line) }
+.ask-mode { font-size: 12px; color: var(--muted); margin-left: 6px; display: inline-flex; align-items: center; gap: 5px }
+.ask-mode i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted) }
+.ask-mode.live i { background: #3ddc97 }
+.ask-cfg { padding: 10px 16px 6px; border-bottom: 1px solid var(--line); background: var(--surface-2); font-size: 13px }
+.ask-cfg label { display: block; margin: 6px 0 }
+.ask-log { flex: 1; overflow: auto; padding: 14px 14px 6px; display: flex; flex-direction: column; gap: 10px }
+.msg-u { align-self: flex-end; max-width: 85%; background: var(--brand); color: var(--on-brand, #04121f); padding: 8px 12px; border-radius: 14px 14px 4px 14px; font-size: 14px }
+.msg-a { align-self: flex-start; max-width: 100%; width: 100%; background: var(--surface-2); border: 1px solid var(--line); padding: 10px 12px; border-radius: 14px 14px 14px 4px; font-size: 14px }
+.msg-a .big { font-size: 26px; font-weight: 700; margin: 2px 0 }
+.msg-a .err { color: #ff9a9a }
+.msg-a details { margin-top: 8px; font-size: 12.5px; color: var(--muted) }
+.msg-a summary { cursor: pointer }
+.msg-a pre { background: var(--canvas); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-size: 11.5px; line-height: 1.4; overflow: auto; max-height: 220px; margin: 6px 0 0; color: var(--ink-2); white-space: pre-wrap }
+.qa-ents { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px }
+.qa-ent { font: inherit; font-size: 12.5px; background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink); border-radius: 999px; padding: 2px 10px; cursor: pointer }
+.qa-ent:hover { border-color: var(--brand); color: var(--brand) }
+.ask-empty { color: var(--ink-2); font-size: 13.5px }
+.ask-empty .sugg { display: flex; flex-direction: column; gap: 6px; margin-top: 10px }
+.sugg button { text-align: left; font: inherit; font-size: 13px; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 7px 10px; cursor: pointer }
+.sugg button:hover { border-color: var(--brand) }
+.ask-in { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line) }
+.ask-in input { flex: 1; font: inherit; padding: 9px 12px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface-2); color: var(--ink) }
+.ask-in input:focus { outline: 2px solid var(--brand); outline-offset: 0 }
+.ask-in button { width: 38px; border-radius: 50%; border: 0; background: var(--brand); color: var(--on-brand, #04121f); font-size: 18px; font-weight: 700; cursor: pointer }
+.typing { color: var(--muted); font-size: 13px }
+@media (max-width: 600px) { .ask { right: 0; bottom: 0; width: 100vw; height: 85vh; border-radius: 14px 14px 0 0 } .fab span { display: none } }
+.nmb:hover { text-decoration: underline }
+.sold { display: inline-block; margin-left: 6px; font-size: 11.5px; padding: 0 7px; border-radius: 999px; background: rgba(61,220,151,.10); border: 1px solid rgba(61,220,151,.35); color: #7fe6b8; white-space: nowrap }
+.soldbox { margin: 10px 0 12px; padding: 10px 12px; border: 1px solid rgba(61,220,151,.35); border-left: 3px solid #3ddc97; border-radius: 6px; background: rgba(61,220,151,.05) }
+.soldbox ul { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--ink-2) }
+.msg-a .flows { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px }
+.msg-a .flows li { font-size: 13px }
+.msg-a .flows .qa-ent { padding: 1px 8px }
+.tagc { display: inline-block; font-size: 12.5px; padding: 2px 10px; border-radius: 999px; background: rgba(61,220,151,.10); border: 1px solid rgba(61,220,151,.35); color: #7fe6b8; margin: 4px 4px 0 0 }
+.cm-pairs button { display: block; width: 100%; text-align: left; font: inherit; font-size: 12.5px; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 5px 0; color: var(--ink); cursor: pointer }
+.cm-pairs button:hover { color: var(--brand) }
+.cm-note { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; max-width: 95ch }
+.mtbl td.num, .mtbl th.num { text-align: right }
+.mtbl tbody tr { cursor: default }
+.mtbl tbody tr:hover td { background: none }
+.mtbl tr.best td { background: var(--brand-soft) }
+.mtbl tr.base td { color: var(--muted) }
+/* ---------- dark theme (one visual world: the page is dark only) */
+:root {
+  color-scheme: dark;
+  --canvas: #0b0f15; --surface: #131923; --surface-2: #1a2230; --line: #243042; --line-strong: #344155;
+  --ink: #e6e9ef; --ink-2: #b4bdca; --muted: #8590a1;
+  --brand: #4f9dff; --brand-hover: #79b4ff; --brand-soft: #142338; --brand-ink: #cfe2ff;
+  --c-company: #4f9dff; --c-offer: #3ddc97; --c-place: #ff8a50; --c-stage: #9aa3b2;
+  --high: #4cc283; --high-soft: #11291c; --med: #b4bdca; --med-soft: #1e2633; --low: #ff7a7a; --low-soft: #331a1d;
+  --pred: #a77bff; --pred-soft: #221a38; --pred-ink: #d2bcff; --graph-bg: #0f141c; --on-brand: #06101f;
+  --comp: #ffa94d;
+}
+body { background: radial-gradient(1200px 500px at 70% -10%, #13233d 0%, transparent 60%), var(--canvas) }
+.appbar { background: linear-gradient(90deg, #0d1626, #10203a 55%, #1a1840); border-bottom: 1px solid #22324a }
+.appbar h1 { color: #fff; letter-spacing: .01em }
+.appbar span { color: #9fb6d6; opacity: 1 }
+.panel { box-shadow: 0 1px 0 rgba(255,255,255,.02), 0 8px 24px rgba(0,0,0,.25) }
+.graphbox { background: var(--graph-bg) }
+.tip { background: #222b38; border: 1px solid var(--line-strong) }
+.notice, .caveat { background: #2a2414; border-color: #5c4a1c; color: #f1d58a }
+.lg-line { border-top-color: #7d8696 } .lg-line.nb { border-top-color: #4f5766 }
+.btrack .ci, .btrack .ci::before, .btrack .ci::after { background: #c8d0dc }
+.btrack .fill.alt, .sw.alt { background: #2f5f99 }
+.hop { background: var(--surface) } .hop.c0 { border-color: #2d6b46 } .hop.c2 { border-color: #7a3036 }
+.chip[aria-pressed="true"], .seg button[aria-pressed="true"], .go { color: var(--on-brand) }
+.go { font-weight: 700 }
+.p2tag { border-color: #24456f }
+.predtag, .toggle, .pred-note { border-color: #4b3a7a }
+.rail input[type=search], .picker input, .controls select, input[type=search] { background: var(--surface-2); color: var(--ink) }
+a { color: var(--brand) }
+::selection { background: #2f5f99 }
+/* ---------- company dashboard */
+.dash-head { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: end; justify-content: space-between }
+.dash-id h2 { font-size: 26px }
+.dash-id .meta { color: var(--ink-2); font-size: 13px; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px 14px }
+.dash-src { font-size: 12px; color: var(--muted); text-align: right }
+.extlink { display: inline-flex; gap: 6px; align-items: center; background: var(--brand); color: var(--on-brand); padding: 6px 12px; border-radius: 4px; font-weight: 700; text-decoration: none; font-size: 13px }
+.extlink:hover { background: var(--brand-hover) }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 12px }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: grid; gap: 2px; align-content: start }
+.tile .lab { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 600 }
+.tile b { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums }
+.tile .sub { font-size: 12px; color: var(--ink-2) }
+.up { color: var(--high) } .down { color: var(--low) }
+.rng { position: relative; height: 6px; background: var(--line); border-radius: 3px; margin-top: 8px }
+.rng i { position: absolute; top: -3px; width: 3px; height: 12px; background: var(--brand); border-radius: 1px }
+.dgrid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px }
+@media (max-width: 980px) { .dgrid { grid-template-columns: minmax(0, 1fr) } }
+#pxchart { display: block; width: 100%; height: 300px }
+.rangebtn { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 4px; overflow: hidden }
+.rangebtn button { border: 0; background: var(--surface); color: var(--ink-2); padding: 3px 10px; cursor: pointer; font-size: 12.5px }
+.rangebtn button + button { border-left: 1px solid var(--line-strong) }
+.rangebtn button[aria-pressed="true"] { background: var(--brand); color: var(--on-brand) }
+.mbar { display: grid; grid-template-columns: 120px minmax(0, 1fr) 56px; gap: 10px; align-items: center; font-size: 13px; margin-top: 8px }
+.mbar .t { height: 10px; background: var(--line); border-radius: 3px; position: relative; overflow: hidden }
+.mbar .t i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--brand); border-radius: 3px }
+.mbar .t i.neg { background: var(--low) }
+.mbar .v { text-align: right; font-variant-numeric: tabular-nums }
+.ann { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px }
+.ann th, .ann td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums }
+.ann th:first-child, .ann td:first-child { text-align: left }
+.ann tbody tr { cursor: default } .ann tbody tr:hover td { background: none }
+.kglist { margin: 6px 0 0; padding-left: 18px; font-size: 13px; color: var(--ink-2) }
+.pxtip { position: absolute; pointer-events: none; background: #222b38; border: 1px solid var(--line-strong); color: var(--ink); font-size: 12px; padding: 4px 8px; border-radius: 4px; opacity: 0 }
+@@@ replace <h1>Semiconductor Supply Chain Graph</h1><span>Team 2 · Knowledge-Based Systems · Semiconductor Supply Chain Mapping in EDC Style Using Multi-Source Unstructured Data · Korea University</span>
+<h1>Semiconductor Supply Chain Knowledge Graph for Equity Research</h1><span>Knowledge-Based Systems · Term Project 2 (individual): clusters, relationship prediction and question answering on the Team 2 graph · Korea University</span>
+@@@ after checked against the CSET ETO Chip Explorer.
+ Phase 2 adds what the graph implies but does not state: companies grouped by what they make, who they trade with and where they sit in the value chain, and <b>predicted</b> customer and supplier relations with the evidence path behind each, always shown apart from the stated ones.
+@@@ after <button class="tab" role="tab" id="tab-analyze" aria-selected="false" aria-controls="p-analyze">Analyze</button>
+<button class="tab" role="tab" id="tab-clusters" aria-selected="false" aria-controls="p-clusters">Clusters &amp; value chain</button>
+@@@ before <label for="maxN">Max relations shown
+<label>Colour companies by
+              <select id="colSel">
+                <option value="type">Entity type</option>
+                <option value="stage">Value-chain stage</option>
+                <option value="eco">Trading ecosystem</option>
+                <option value="role">Role from products</option>
+              </select>
+            </label>
+            <label>Size companies by
+              <select id="sizeSel">
+                <option value="links">Number of relations</option>
+                <option value="mcap">Market cap (listed only)</option>
+              </select>
+            </label>
+            <span class="toggle" role="group" aria-label="Show predicted relations" title="The recommender's top 5 of each kind for this company. None of them is stated in any source.">Predicted:
+              <label><input type="checkbox" id="predCus"> customers</label><label><input type="checkbox" id="predSup"> suppliers</label><label class="comp"><input type="checkbox" id="predCom"> competitors</label></span>
+@@@ before <span>Arrows point from supplier to customer, provider to product, subsidiary to parent</span>
+<span><i class="lg-line pred"></i>Predicted customer / supplier</span>
+            <span><i class="lg-line comp"></i>Predicted competitor</span>
+            <span id="colLegend"></span>
+            <span id="sizeLegend" style="display:none"></span>
+@@@ before <aside class="drawer" id="drawer" hidden aria-label="Evidence">
+<section id="p-clusters" role="tabpanel" aria-labelledby="tab-clusters" hidden>
+    <div class="cm-wrap">
+      <div class="panel">
+        <div class="panel-h"><h2>Companies by cluster</h2>
+          <span class="seg" role="group" aria-label="Map view">
+            <button id="cm-v-chain" aria-pressed="true">Value chain</button><button id="cm-v-eco" aria-pressed="false">Ecosystems</button><button id="cm-v-role" aria-pressed="false">Roles</button><button id="cm-v-tier" aria-pressed="false">Tiers</button><button id="cm-v-eto" aria-pressed="false">vs ETO</button>
+          </span></div>
+        <div class="controls">
+          <input type="search" id="cm-q" placeholder="Find a company" aria-label="Find a company" style="font:inherit;padding:4px 8px;border:1px solid var(--line-strong);border-radius:4px;width:200px">
+          <label><input type="checkbox" id="cm-leaf"> Hide companies with one link</label>
+          <label><input type="checkbox" id="cm-links"> Show all supply links</label>
+          <label class="toggle"><input type="checkbox" id="cm-pred" checked> Predictions for the selected company</label>
+        </div>
+        <p class="cm-note" id="cm-note"></p>
+        <div class="cm-box"><svg id="cm-svg" role="img" aria-label="Supply graph companies grouped by cluster"></svg>
+          <div class="zoombar"><button id="cm-zin" aria-label="Zoom in">+</button><button id="cm-zout" aria-label="Zoom out">−</button><button id="cm-zfit" aria-label="Reset zoom">Reset</button></div>
+          <div class="tip" id="cm-tip"></div></div>
+        <div class="hint">Thick arrows: the production sequence. Click a company for its partners and predictions, or a stage for the supply links in and out of it. Drag to pan, Ctrl + scroll to zoom.</div>
+      </div>
+      <div class="cm-side">
+        <div class="panel"><div class="label" id="cm-lgt">Legend</div><div class="cm-legend" id="cm-legend" style="margin-top:8px"></div></div>
+        <div class="panel cm-detail" id="cm-detail"></div>
+        <div class="panel"><div class="label">Same products, different ecosystem</div><p class="cm-note" style="margin:4px 0 6px">Companies that make the same things but trade in different circles.</p><div class="cm-pairs" id="cm-pairs"></div></div>
+      </div>
+    </div>
+  </section>
+
+<div class="sheet-bg" id="sheet-bg" hidden></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-h"><span class="label">Company profile</span><h2 class="vh" id="sheet-title"></h2>
+    <span class="sheet-act"><button class="more" id="sheet-explore">Show in graph</button><button class="xbtn" id="sheet-x" aria-label="Close">×</button></span></div>
+  <div id="dash"></div>
+</aside>
+<button class="fab" id="ask-fab" aria-expanded="false" aria-controls="ask"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm3 6.5a1.5 1.5 0 1 0 0 .01Zm5 0a1.5 1.5 0 1 0 0 .01Zm5 0a1.5 1.5 0 1 0 0 .01Z"/></svg><span>Ask the graph</span></button>
+<section class="ask" id="ask" role="dialog" aria-label="Ask the graph" hidden>
+  <header class="ask-h"><div><b>Ask the graph</b> <span class="ask-mode" id="ask-mode"><i></i><span>connecting…</span></span></div>
+    <div><button class="xbtn" id="ask-cfg" aria-label="Settings" aria-expanded="false" title="Settings">⚙</button><button class="xbtn" id="ask-x" aria-label="Close">×</button></div></header>
+  <div class="ask-cfg" id="ask-cfgp" hidden>
+    <div class="label">Who turns the question into a query</div>
+    <label><input type="radio" name="ask-pl" value="claude" checked> Claude <span class="listnote" id="ask-claude-note"></span></label>
+    <label><input type="radio" name="ask-pl" value="template"> Patterns only (no LLM)</label>
+    <p class="listnote">Either way the answer comes from the graph, never from the model's own knowledge.</p>
+  </div>
+  <div class="ask-log" id="ask-log" aria-live="polite"></div>
+  <form class="ask-in" id="ask-form"><input id="ask-q" placeholder="Ask about suppliers, customers, products…" autocomplete="off" aria-label="Question"><button type="submit" aria-label="Send">↑</button></form>
+</section>
+@@@ before <div class="panel">\n        <h2>Limits of these numbers</h2>
+<div class="panel" style="margin-bottom:16px" id="qa-eval-panel"><h2>Question answering: held-out test</h2><p class="cap" id="qa-cap"></p><div class="tbl-wrap"><table id="qa-tbl"></table></div><p class="cm-note" id="qa-note2" style="margin-top:8px"></p></div>
+<div class="panel" style="margin-bottom:16px"><h2>Who sells what to whom: coverage</h2><p class="cap" id="sold-cap" style="margin-top:6px"></p></div>
+<div class="grid2">
+        <div class="panel">
+          <h2>Predicted relations: how often the true partner is found</h2>
+          <p class="cap" id="ev-cap"></p>
+          <div id="b-rec"></div>
+        </div>
+        <div class="panel">
+          <h2>What each part of the recommender adds</h2>
+          <p class="cap">Mean reciprocal rank (1 = the hidden partner ranked first, 0.5 = second). Hybrid = reciprocal-rank fusion of peers, product peers and popularity, then the product gate. Remove one part to see what it carries; stage and ecosystem were tested as extra parts and left out because they lowered the score.</p>
+          <div id="t-rec"></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h2>Roles and stages against ETO</h2>
+          <p class="cap">38 companies of the graph have an ETO label. Role and stage from products are compared with what ETO says each company provides; the Phase 1 stage labels are the baseline. Bars: share correct where the method gives an answer; the count shows how many of the 38 it covers.</p>
+          <div id="b-clu"></div>
+        </div>
+        <div class="panel">
+          <h2>Predicted competitors against ETO</h2>
+          <p class="cap" id="comp-cap"></p>
+          <div id="b-comp"></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h2>Hits@10 by the supplier's stage</h2>
+          <p class="cap">Hybrid with gate, recommending customers. Few test links in the smaller stages, so read the counts.</p>
+          <div id="b-stage"></div>
+        </div>
+      </div>
+
+@@@ replace <footer>Graph v2 (reviewed): 50 Wikipedia articles and 78 SEC 10-K / 20-F filings. Reference data: CSET Emerging Technology Observatory, Chip Explorer (CC BY-NC 4.0), used for a non-commercial course project. Relations extracted by LLMs may contain errors; check the evidence.</footer>
+<footer>Graph v2 (reviewed) by Team 2: 50 Wikipedia articles and 78 SEC 10-K / 20-F filings. Phase 2 (clusters, value chain, predicted relations) is computed from that graph without new extraction; predicted relations are hypotheses, not facts. Reference data: CSET Emerging Technology Observatory, Chip Explorer and Supply Chain Explorer (CC BY-NC 4.0), used for a non-commercial course project. Value-chain stages follow CSIS, "Simplified Depiction of the Semiconductor Value Chain". Relations extracted by LLMs may contain errors; check the evidence.</footer>
+@@@ before const R = D.rels;
+const P2 = /*P2DATA*/;
+@@@ replace const tabs = ['explore', 'analyze', 'eval'];
+const tabs = ['explore', 'analyze', 'clusters', 'eval'];
+@@@ replace   if (t === 'analyze' && !toolRendered) renderTool();
+  if (t === 'analyze' && !toolRendered) renderTool();
+  if (t === 'clusters') CM.show();
+@@@ replace     ${stageLine(current)}
+    ${stageLine(current)}${p2Line(current)}
+@@@ replace <button data-tool="path">Find a path to another entity</button></div>
+<button data-tool="path">Find a path to another entity</button>${P2.recs.customers[e[5]] || P2.recs.suppliers[e[5]] ? '<button data-tool="recommend">Predict new partners</button>' : ''}<button data-dash="1">${P2.fin && P2.fin.companies[e[5]] ? 'Financials &amp; profile' : 'Company profile'}</button></div>
+@@@ replace   document.getElementById('relcard').innerHTML = html || '<p class="empty">No relations match these filters. Set Show to “All relations” or Source to “Any”.</p>';
+  document.getElementById('relcard').innerHTML = (html || '<p class="empty">No relations match these filters. Set Show to “All relations” or Source to “Any”.</p>') + predSections();
+@@@ before   const tr = ev.target.closest('tr[data-e]'); if (tr) { showEvidence(+tr.dataset.e, true); }
+  const pr = ev.target.closest('tr[data-pred]'); if (pr) { showPrediction(pr.dataset.pred, true); return; }
+@@@ before   const nodes = [...ids].map(i => ({ i, t: D.ents[i][1], name: D.ents[i][0], center: i === current }));
+  const predIds = addPredicted(ids, links);
+@@@ replace   const nodes = [...ids].map(i => ({ i, t: D.ents[i][1], name: D.ents[i][0], center: i === current }));
+  const nodes = [...ids].map(i => ({ i, t: D.ents[i][1], name: D.ents[i][0], center: i === current, pred: predIds.get(i) }));
+@@@ replace [['a-norm', '#605e5c'], ['a-nb', '#a19f9d'], ['a-sel', '#0f6cbd']]
+[['a-norm', '#7d8696'], ['a-nb', '#4f5766'], ['a-sel', '#4f9dff'], ['a-pred', '#a77bff'], ['a-psel', '#d2bcff']]
+@@@ replace   linkSel.attr('stroke', d => d.i === selEdge ? '#0f6cbd' : (d.nb ? '#a19f9d' : '#605e5c'))\n    .attr('stroke-width', d => d.i === selEdge ? 4 : d.nb ? 1 : (d.e[3] === 0 ? 2.4 : 1.2))\n    .attr('marker-end', d => R[d.e[2]] === 'PARTNERS_WITH' ? null : `url(#${d.i === selEdge ? 'a-sel' : d.nb ? 'a-nb' : 'a-norm'})`);
+  linkSel.attr('stroke', d => d.pred ? (d.i === selEdge ? '#ffffff' : KIND_COL[d.kind]) : d.i === selEdge ? '#4f9dff' : (d.nb ? '#4f5766' : '#7d8696'))
+    .attr('stroke-width', d => d.i === selEdge ? 4 : d.pred ? 2 : d.nb ? 1 : (d.e[3] === 0 ? 2.4 : 1.2))
+    .attr('marker-end', d => R[d.e[2]] === 'PARTNERS_WITH' ? null : `url(#${d.pred ? (d.i === selEdge ? 'a-psel' : 'a-pred') : d.i === selEdge ? 'a-sel' : d.nb ? 'a-nb' : 'a-norm'})`);
+@@@ replace .attr('stroke-dasharray', d => d.nb ? '4 3' : null)
+.attr('stroke-dasharray', d => d.pred ? (d.kind === 'competitors' ? '2 5' : '6 4') : d.nb ? '4 3' : null)
+@@@ replace c = COL[GROUP(d.t)], grp = GROUP(d.t);
+c = nodeColour(d), grp = GROUP(d.t);
+@@@ replace r = d.center ? 11 : (nodes.length > 70 ? 4.5 : 6) + Math.min(4, Math.sqrt(deg[d.i]) / 3)
+r = nodeRadius(d, nodes.length)
+@@@ replace     shape.attr('fill', c).attr('stroke', '#fff').attr('stroke-width', 2);
+    shape.attr('fill', hollow(d) ? 'transparent' : c).attr('stroke', d.pred ? KIND_COL[d.pred] : hollow(d) ? c : '#0f141c').attr('stroke-width', d.pred ? 2.5 : 2).attr('stroke-dasharray', d.pred ? '3 2' : null);
+@@@ replace .on('mousemove', (ev, d) => placeTip(ev, `<b>${esc(d.name)}</b><br>${TYPE_LABEL[d.t]} · ${deg[d.i]} relations${d.center ? '' : '<br>Click to open'}`))
+.on('mousemove', (ev, d) => placeTip(ev, `<b>${esc(d.name)}</b><br>${TYPE_LABEL[d.t]} · ${deg[d.i]} relations${p2Tip(d.i)}${d.pred ? `<br><span style="color:${KIND_COL[d.pred]}">Predicted ${d.pred.slice(0, -1)}</span>` : ''}${d.center ? '' : '<br>Click to open'}`))
+@@@ replace   hit.on('click', (ev, d) => showEvidence(d.i, true))\n    .on('mousemove', (ev, d) => placeTip(ev, `${esc(D.ents[d.e[0]][0])} <b>${VERB[R[d.e[2]]]}</b> ${esc(D.ents[d.e[1]][0])}<br>${CONF[d.e[3]]} · ${SRC[d.e[5]].join(' + ')}<br>Click for evidence`))
+  hit.on('click', (ev, d) => d.pred ? showPrediction(d.i, true) : showEvidence(d.i, true))
+    .on('mousemove', (ev, d) => placeTip(ev, d.pred ? `${esc(D.ents[d.e[0]][0])} <b>${d.kind === 'competitors' ? 'competes with' : 'could supply'}</b> ${esc(D.ents[d.e[1]][0])}<br>Predicted, rank ${d.rank} · not in the sources<br>Click for the evidence`
+      : `${esc(D.ents[d.e[0]][0])} <b>${VERB[R[d.e[2]]]}</b> ${esc(D.ents[d.e[1]][0])}<br>${CONF[d.e[3]]} · ${SRC[d.e[5]].join(' + ')}<br>Click for evidence`))
+@@@ replace const TOOLS = [
+const TOOLS = [
+  ['recommend', 'Predict new partners', 'Likely next customers or suppliers, with the evidence path'],
+@@@ replace   if (t === 'compare') S.a = ent; if (t === 'deps') S.d = ent; if (t === 'path') S.pa = ent;
+  if (t === 'compare') S.a = ent; if (t === 'deps') S.d = ent; if (t === 'path') S.pa = ent; if (t === 'recommend') S.r = ent;
+@@@ replace   ({ compare: toolCompare, path: toolPath, deps: toolDeps, single: toolSingle, check: toolCheck })[S.tool]();
+  ({ compare: toolCompare, path: toolPath, deps: toolDeps, single: toolSingle, check: toolCheck, recommend: toolRecommend })[S.tool]();
+@@@ replace     ({ compare: compareResult, path: pathResult, deps: depsResult, single: singleResult, check: checkResult })[S.tool](); }
+    ({ compare: compareResult, path: pathResult, deps: depsResult, single: singleResult, check: checkResult, recommend: recResult })[S.tool](); }
+@@@ before   const h = ev.target.closest('[data-ev]'); if (h) { openDrawer(+h.dataset.ev); return; }
+  const pv = ev.target.closest('[data-pev]'); if (pv) { openPredDrawer(pv.dataset.pev); return; }
+@@@ before renderList(); renderEntity(); renderRelations(); showEvidence(null);\nrequestAnimationFrame(draw);
+// =====================================================================
+// ---------- Phase 2: clusters, predicted relations
+const LANE = P2.lanes, CATL = c => P2.cat_label[c] || c.replace(/_/g, ' ');
+const M = P2.map, mById = Object.fromEntries(M.nodes.map(n => [n.id, n]));
+const ECO_PAL = ['#4f9dff', '#ffa94d', '#3ddc97', '#ff6fae', '#a77bff', '#e6c84f', '#3fd0e0', '#c9895f', '#ff8080', '#8bd450', '#d08bff', '#6fb3b8', '#b8bfcc', '#8fa2d6', '#f0c96a'];
+const ROLE_COL = { materials: '#c9895f', equipment: '#ffa94d', design_tools_ip: '#a77bff', chips: '#4f9dff', manufacturing: '#3fd0e0', components: '#e6c84f', systems: '#3ddc97', cloud_software: '#ff6fae', other: '#8a94a3' };
+const LANE_COL = { chips: '#4f9dff', fabrication: '#3fd0e0', assembly_test: '#a77bff', systems_cloud: '#3ddc97', design_sw_ip: '#ff6fae', materials: '#c9895f', equipment: '#ffa94d', unknown_inputs: '#8a94a3', components_ems: '#e6c84f' };
+const TIER_COL = { upstream: '#ffa94d', chips: '#4f9dff', downstream: '#3ddc97' };
+const NOCOL = '#4a5262';
+const colSel = document.getElementById('colSel');
+const KINDS = { customers: 'predCus', suppliers: 'predSup', competitors: 'predCom' };
+const predOn = () => Object.keys(KINDS).filter(k => document.getElementById(KINDS[k]).checked);
+const KIND_COL = { customers: '#a77bff', suppliers: '#a77bff', competitors: '#ffa94d' };
+const RANK_N = 5;   // predicted partners per direction shown in the network
+
+function nodeColour(d) {
+  const v = colSel.value; if (v === 'type' || d.t !== 0) return COL[GROUP(d.t)];
+  const m = mById[D.ents[d.i][5]]; if (!m) return NOCOL;
+  if (v === 'stage') return m.lane ? LANE_COL[m.lane] : NOCOL;
+  if (v === 'eco') return m.eco == null ? NOCOL : ECO_PAL[m.eco % ECO_PAL.length];
+  if (v === 'role') return m.role ? ROLE_COL[m.role] : NOCOL;
+  return COL.company;
+}
+function colLegend() {
+  const v = colSel.value, el = document.getElementById('colLegend');
+  const it = (c, t) => `<span><i class="glyph" style="background:${c};border-radius:50%"></i>${esc(t)}</span>`;
+  if (v === 'stage') el.innerHTML = Object.entries(LANE).map(([k, t]) => it(LANE_COL[k], t)).join(' ');
+  else if (v === 'role') el.innerHTML = Object.entries(ROLE_COL).map(([k, c]) => it(c, k.replace(/_/g, ' '))).join(' ');
+  else if (v === 'eco') el.innerHTML = 'Company colour = its trading ecosystem (see Clusters &amp; value chain)';
+  else el.innerHTML = '';
+  if (v !== 'type') el.innerHTML += ' ' + it(NOCOL, 'not in the supply graph');
+  el.style.display = v === 'type' ? 'none' : 'contents';
+}
+colSel.addEventListener('change', () => { colLegend(); draw(); });
+const sizeSel = document.getElementById('sizeSel');
+const mcapOf = i => { const f = P2.fin && P2.fin.companies[D.ents[i][5]]; return f && f.mcap_usd ? f.mcap_usd : null; };
+const hollow = d => sizeSel.value === 'mcap' && d.t === 0 && mcapOf(d.i) == null;
+function nodeRadius(d, n) {
+  if (sizeSel.value === 'mcap' && d.t === 0) {   // log scale: $1B -> 4, $10B -> 7, $100B -> 10, $1T -> 13
+    const mc = mcapOf(d.i);
+    if (mc == null) return d.center ? 8 : 4;
+    return Math.max(4, Math.min(16, 4 + 3 * Math.log10(mc / 1e9))) + (d.center ? 2 : 0);
+  }
+  return d.center ? 11 : (n > 70 ? 4.5 : 6) + Math.min(4, Math.sqrt(deg[d.i]) / 3);
+}
+function sizeLegend() {
+  const el = document.getElementById('sizeLegend'); if (!el) return;
+  const on = sizeSel.value === 'mcap';
+  el.innerHTML = on ? (P2.fin ? `Size = market cap in USD (Yahoo Finance, ${esc(P2.fin.as_of)}; log scale). Hollow = not listed or no ticker in the graph.` : 'No market data in this build.') : '';
+  el.style.display = on ? 'contents' : 'none';
+}
+sizeSel.addEventListener('change', () => { sizeLegend(); draw(); });
+const fmtCap = v => v >= 1e12 ? `$${(v / 1e12).toFixed(2)}T` : v >= 1e9 ? `$${(v / 1e9).toFixed(1)}B` : `$${(v / 1e6).toFixed(0)}M`;
+Object.values(KINDS).forEach(id => document.getElementById(id).addEventListener('change', () => { renderRelations(); draw(); }));
+
+function p2Line(c) {
+  const m = mById[D.ents[c][5]]; if (!m) return '';
+  const lane = m.lane ? `<span class="p2tag">${esc(LANE[m.lane])}${m.placed_by !== 'products' ? ' · placed by partners' : ''}</span>` : '';
+  const role = m.role ? `<span class="p2tag">role: ${esc(m.role.replace(/_/g, ' '))}</span>` : '';
+  const eco = m.eco != null ? `<span class="p2tag">ecosystem ${m.eco}</span>` : '';
+  const mk = m.makes.length ? `<div class="aliases">Makes (product categories): ${m.makes.map(x => esc(CATL(x))).join(' · ')}</div>` : '';
+  return `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${lane}${role}${eco}</div>${mk}`;
+}
+function p2Tip(i) { const m = mById[D.ents[i][5]], mc = D.ents[i][1] === 0 ? mcapOf(i) : null; return (m && m.lane ? `<br>${esc(LANE[m.lane])} · ecosystem ${m.eco}` : '') + (mc ? `<br>Market cap ${fmtCap(mc)}` : ''); }
+
+// predictions: id "dir|a|rank"
+const recsOf = (cid, dir) => P2.recs[dir][cid] || [];
+function predKey(dir, a, k) { return `${dir}|${a}|${k}`; }
+function predGet(key) { const [dir, a, k] = key.split('|'); const row = recsOf(a, dir)[+k]; return row ? { dir, a, k: +k, row } : null; }
+function addPredicted(ids, links) {
+  const out = new Map(); if (D.ents[current][1] !== 0) return out;
+  const cid = D.ents[current][5];
+  predOn().forEach(dir => recsOf(cid, dir).slice(0, RANK_N).forEach((row, k) => {
+    const o = byId[row[0]]; if (o == null) return;
+    if (!ids.has(o)) { ids.add(o); out.set(o, dir); }
+    const comp = dir === 'competitors', s = dir === 'suppliers' ? o : current, t = dir === 'suppliers' ? current : o;
+    links.push({ i: predKey(dir, cid, k), e: [s, t, R.indexOf(comp ? 'PARTNERS_WITH' : 'SUPPLIES_TO'), 1, 0, 0, '', '', 0, 0, 0], nb: false, pred: true, kind: dir, rank: k + 1 });
+  }));
+  return out;
+}
+function predSections() {
+  if (D.ents[current][1] !== 0) return '';
+  const cid = D.ents[current][5];
+  return predOn().map(dir => { const rows = recsOf(cid, dir); if (!rows.length) return '';
+    return `<div class="rel-sec pred${dir === 'competitors' ? ' comp' : ''}"><h3>Predicted ${dir} <span class="num">${rows.length}</span> <span class="predtag">not in the sources</span></h3>
+      <div class="tbl-wrap"><table><thead><tr><th>Rank</th><th>Company</th><th>Value-chain stage</th><th>Strongest evidence</th></tr></thead><tbody>
+      ${rows.map((r, k) => { const o = byId[r[0]], m = mById[r[0]], key = predKey(dir, cid, k);
+        return `<tr data-pred="${key}" aria-selected="${key === selEdge}" tabindex="0"><td class="rank">${k + 1}</td><td><span class="ename">${glyph(0)}${esc(D.ents[o][0])}</span><button class="open" data-i="${o}">open</button></td>
+        <td style="color:var(--ink-2)">${m && m.lane ? esc(LANE[m.lane]) : '—'}</td><td style="color:var(--ink-2);font-size:12.5px">${esc(firstWhy(cid, dir, r))}</td></tr>`; }).join('')}
+      </tbody></table></div></div>`; }).join('');
+}
+const nm = cid => byId[cid] != null ? D.ents[byId[cid]][0] : cid;
+const list3 = a => a.map(nm).join(', ');
+function whys(a, dir, r) {
+  const d = r[0], ev = r[2], verb = dir === 'customers' ? 'supplies' : 'buys from', out = [];
+  if (dir === 'competitors') {
+    if (ev.cats.length) out.push(['Same products', `Both mainly make ${ev.cats.map(CATL).join(', ')}.`]);
+    if (ev.items.length) out.push(['Same offerings', `Both provide ${ev.items.join(', ')}.`]);
+    if (ev.customers.length) out.push(['Same customers', `Both sell to ${list3(ev.customers)}.`]);
+    if (ev.eco) out.push(['Ecosystem', `Both trade in the same circle (ecosystem ${mById[a] ? mById[a].eco : ''}).`]);
+    return out.length ? out : [['Weak match', 'Little overlap in products or customers.']];
+  }
+  ev.peers.forEach(([b, shared]) => out.push(['Similar company', `${nm(b)} also ${verb} ${list3(shared)}, like ${nm(a)}, and ${verb} ${nm(d)}.`]));
+  if (ev.gate === 'pass') { const sup = dir === 'customers' ? a : d, cus = dir === 'customers' ? d : a, c0 = ev.cats[0], via = ev.via[c0] || [];
+    out.push(['Product fit', `${nm(sup)} makes ${ev.cats.map(CATL).join(', ')}, which ${nm(cus)} buys${via.length ? ` (from ${list3(via)})` : ''}.`]); }
+  if (ev.stage && ev.stage[2]) out.push(['Value-chain stage', `${LANE[ev.stage[0]]} → ${LANE[ev.stage[1]]}: ${Math.round(ev.stage[2] * 100)}% of the supply links leaving ${LANE[ev.stage[0]]}.`]);
+  if (ev.eco) out.push(['Ecosystem', `Both trade in the same circle (ecosystem ${mById[a] ? mById[a].eco : ''}).`]);
+  return out.length ? out : [['Popular buyer', 'No closer evidence path: ranked mainly because many companies sell to it.']];
+}
+const firstWhy = (a, dir, r) => whys(a, dir, r)[0][1];
+function predBody(key) {
+  const p = predGet(key); if (!p) return '';
+  const { dir, a, k, row } = p, d = row[0], sup = dir === 'customers' ? a : d, cus = dir === 'customers' ? d : a;
+  if (dir === 'competitors') { const C = P2.eval_comp.methods.hybrid;
+    return `<div class="evi-title">${glyph(0)}<span>${esc(nm(a))}</span><span class="rel" style="color:var(--comp)">competes with</span>${glyph(0)}<span>${esc(nm(d))}</span> <span class="predtag">predicted</span></div>
+    <div class="evi-meta"><span>Rank <b class="num">${k + 1}</b> of the predicted competitors of ${esc(nm(a))}</span><span>Score <b class="num">${row[1].toFixed(3)}</b></span></div>
+    <ol class="whys comp">${whys(a, dir, row).map(([t, s]) => `<li><b class="k">${esc(t)}</b>${esc(s)}</li>`).join('')}</ol>
+    <p class="pred-note">Inferred from shared products and customers; the sources do not state competition. Checked against CSET ETO (companies listed as providers of the same input): for ${C.n} companies, a true competitor was in the top 10 for ${Math.round(C['Hit@10'] * 100)}% and ${Math.round(C['P@5'] * 100)}% of the top 5 were confirmed (Accuracy tab).</p>`; }
+  const E = P2.eval[dir].methods['hybrid+gate'];
+  return `<div class="evi-title">${glyph(0)}<span>${esc(nm(sup))}</span><span class="rel" style="color:var(--pred-ink)">could supply</span>${glyph(0)}<span>${esc(nm(cus))}</span> <span class="predtag">predicted</span></div>
+    <div class="evi-meta"><span>Rank <b class="num">${k + 1}</b> of the predicted ${dir} of ${esc(nm(a))}</span><span>Score <b class="num">${row[1].toFixed(3)}</b></span><span>Product gate: ${row[2].gate}</span></div>
+    <ol class="whys">${whys(a, dir, row).map(([t, s]) => `<li><b class="k">${esc(t)}</b>${esc(s)}</li>`).join('')}</ol>
+    <p class="pred-note">Predicted from the graph's structure; no source states this relation. When 20% of the known links were hidden, the hidden ${dir === 'customers' ? 'customer' : 'supplier'} was in the top 10 for ${Math.round(E['Hits@10'] * 100)}% of them (Accuracy tab).</p>`;
+}
+function showPrediction(key, scroll) {
+  selEdge = key;
+  const box = document.getElementById('evidence');
+  box.innerHTML = `<div class="panel-h"><h2>Why this prediction</h2><button class="more" id="evclose">Close</button></div>` + predBody(key);
+  document.getElementById('evclose').addEventListener('click', () => { showEvidence(null); renderRelations(); highlight(); });
+  relcard.querySelectorAll('tr[data-pred],tr[data-e]').forEach(tr => tr.setAttribute('aria-selected', (tr.dataset.pred || +tr.dataset.e) === key));
+  highlight();
+  if (scroll) box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function openPredDrawer(key) {
+  drawerFrom = document.activeElement;
+  drawerBody.innerHTML = `<div class="panel-h"><h2>Why this prediction</h2><button class="more" id="dclose">Close</button></div>${predBody(key)}`;
+  drawer.hidden = false; drawer.scrollTop = 0; document.getElementById('dclose').focus();
+}
+
+// analyze tool
+S.r = byName('company_008'); S.rdir = 'customers';
+function toolRecommend() {
+  toolpanel.innerHTML = head('Predict new partners', 'Companies that could become this company\'s next customers (or suppliers), ranked by the Phase 2 recommender: similar companies\' partners, product fit and popularity, combined by reciprocal-rank fusion, with a product gate that drops partners who buy nothing the supplier makes. Each prediction lists the path that supports it. None of these relations is stated in the sources.')
+    + `<div class="controls">${picker('ra', 'Company', S.r, true)}<label>Predict <select id="rdir"><option value="customers"${S.rdir === 'customers' ? ' selected' : ''}>Customers</option><option value="suppliers"${S.rdir === 'suppliers' ? ' selected' : ''}>Suppliers</option><option value="competitors"${S.rdir === 'competitors' ? ' selected' : ''}>Competitors</option></select></label><button class="go" id="rgo">Predict</button></div><div id="rres"></div>`;
+  const run = () => { const a = readPick('ra', true); S.rdir = document.getElementById('rdir').value; if (a == null) return; S.r = a; recResult(); };
+  document.getElementById('rgo').onclick = run; document.getElementById('rdir').onchange = run;
+  document.getElementById('ra').addEventListener('keydown', ev => { if (ev.key === 'Enter') run(); });
+  run();
+}
+function recResult() {
+  const a = D.ents[S.r][5], dir = S.rdir, rows = recsOf(a, dir), el = document.getElementById('rres'), A = D.ents[S.r][0];
+  const known = dir === 'competitors' ? [] : adj[S.r].filter(i => RN(i) === 'SUPPLIES_TO' && D.edges[i][dir === 'customers' ? 0 : 1] === S.r).map(i => D.edges[i][dir === 'customers' ? 1 : 0]);
+  if (!rows.length) { el.innerHTML = `<p class="res-sum">No predictions for <b>${esc(A)}</b>: it has no supply links or product profile in the graph to start from.</p>`; return; }
+  const E = dir === 'competitors' ? null : P2.eval[dir].methods['hybrid+gate'], CE = P2.eval_comp.methods.hybrid;
+  el.innerHTML = (dir === 'competitors' ? `<p class="res-sum">Companies that make what <b>${esc(A)}</b> makes and sell to the same customers, most similar first. Against ETO, a true competitor was in the top 10 for <b>${Math.round(CE['Hit@10'] * 100)}%</b> of the ${CE.n} companies ETO covers.</p>` : `<p class="res-sum"><b>${esc(A)}</b> ${dir === 'customers' ? 'supplies' : 'buys from'} ${known.length} compan${known.length === 1 ? 'y' : 'ies'} in the sources${known.length ? ` (${known.slice(0, 6).map(i => esc(D.ents[i][0])).join(', ')}${known.length > 6 ? ' …' : ''})` : ''}. Predicted next ${dir}, best first. In testing the true partner was in the top 10 for <b>${Math.round(E['Hits@10'] * 100)}%</b> of hidden links.</p>`)
+    + table(['#', 'Company', 'Stage', 'Why', ''], rows.map((r, k) => { const o = byId[r[0]], m = mById[r[0]];
+      return `<tr><td class="rank">${k + 1}</td><td>${nmb(o)}${ctry(o)}</td><td style="color:var(--ink-2);font-size:12.5px">${m && m.lane ? esc(LANE[m.lane]) : '—'}</td>
+        <td style="font-size:12.5px">${whys(a, dir, r).slice(0, 2).map(([t, s]) => `<div><b>${esc(t)}:</b> ${esc(s)}</div>`).join('')}</td>
+        <td><button class="hop c1" data-pev="${predKey(dir, a, k)}" style="color:${dir === 'competitors' ? 'var(--comp)' : 'var(--pred-ink)'};border-color:#4b3a7a;background:var(--pred-soft)">all evidence →</button></td></tr>`; }));
+}
+
+// accuracy panels
+(() => {
+  const ec = P2.eval.customers, es = P2.eval.suppliers;
+  document.getElementById('ev-cap').textContent = `20% of the ${fmt(D.edges.filter(e => R[e[2]] === 'SUPPLIES_TO').length)} supply relations hidden (${ec.test_edges} links, every company keeps at least one), everything refitted on the rest, ${ec.seeds} random splits. Hits@10: share of hidden partners ranked in the top 10 of 238 companies. Popularity (rank by number of existing suppliers) is the baseline.`;
+  const row = (lab, m, alt) => ({ label: lab, v: m['Hits@10'] * 100, n: `MRR ${m.MRR.toFixed(2)}`, alt });
+  bars(document.getElementById('b-rec'), [row('Customers: hybrid', ec.methods['hybrid+gate']), row('Customers: popularity', ec.methods['popularity'], true),
+    row('Suppliers: hybrid', es.methods['hybrid+gate']), row('Suppliers: popularity', es.methods['popularity'], true)]);
+  const NAMES = [['hybrid+gate', 'Hybrid (with product gate)'], ['hybrid', 'Hybrid, no gate'], ['hybrid-peers', '  without similar companies'], ['hybrid-product', '  without product peers'],
+    ['hybrid-popularity', '  without popularity'], ['hybrid_with_stage', '  plus value-chain stage'], ['hybrid_with_ecosystem', '  plus ecosystem'],
+    ['peers', 'Similar companies alone'], ['product', 'Product peers alone'], ['popularity', 'Popularity (baseline)'], ['stage', 'Stage alone'], ['ecosystem', 'Ecosystem alone']];
+  const emb = P2.emb || {};
+  document.getElementById('t-rec').innerHTML = `<div class="tbl-wrap"><table class="mtbl"><thead><tr><th>Method</th><th class="num">Customers</th><th class="num">Suppliers</th></tr></thead><tbody>${NAMES.map(([k, l]) =>
+    `<tr class="${k === 'hybrid+gate' ? 'best' : k === 'popularity' ? 'base' : ''}"><td style="white-space:pre">${esc(l)}</td><td class="num">${ec.methods[k] ? ec.methods[k].MRR.toFixed(3) : '—'}</td><td class="num">${es.methods[k] ? es.methods[k].MRR.toFixed(3) : '—'}</td></tr>`).join('')}
+    ${emb.customers ? `<tr><td>KG embeddings alone (RotatE, 3 splits)</td><td class="num">${emb.customers.embedding.toFixed(3)}</td><td class="num">${emb.suppliers.embedding.toFixed(3)}</td></tr><tr><td>Hybrid plus embeddings (3 splits)</td><td class="num">${emb.customers.hybrid.toFixed(3)}</td><td class="num">${emb.suppliers.hybrid.toFixed(3)}</td></tr>` : ''}</tbody></table></div>`;
+  const C = P2.clusters, frac = (x, lab, alt) => ({ label: `${lab} (${x.covered} of ${x.graded})`, v: (x.accuracy_on_covered || 0) * 100, n: `${x.correct}/${x.covered}`, alt });
+  bars(document.getElementById('b-clu'), [frac(C.role.rule_products, 'Role from products'), frac(C.role.unsupervised_ward_k, 'Role, unsupervised clustering', true),
+    frac(C.stage.from_products, 'Stage from products'), frac(C.stage.phase1_llm_stage_baseline, 'Stage, Phase 1 labels', true),
+    frac(C.tier.from_below_customers, 'Tier from customers'), frac(C.tier.from_above_suppliers, 'Tier from suppliers', true)]);
+  const CE = P2.eval_comp, cm = (l, k, alt) => ({ label: l, v: CE.methods[k]['Hit@10'] * 100, n: `P@5 ${Math.round(CE.methods[k]['P@5'] * 100)}%`, alt });
+  document.getElementById('comp-cap').textContent = `The graph has no competition relation, so ETO is the reference: two companies listed as providers of the same input count as competitors (${CE.gold_pairs} pairs among ${CE.companies} companies). Bars: share of companies with a true competitor in the top 10; P@5: share of the top 5 that ETO confirms. ETO is incomplete, so both are lower bounds.`;
+  bars(document.getElementById('b-comp'), [cm('Hybrid', 'hybrid'), cm('Shared offerings', 'items', true), cm('Same products', 'product', true), cm('Shared customers', 'customers', true), cm('Popularity (baseline)', 'popularity', true)]);
+  bars(document.getElementById('b-stage'), Object.entries(ec.by_stage).sort((a, b) => b[1].n - a[1].n).map(([k, v]) => ({ label: k, v: v['Hits@10'] * 100, n: `n ${v.n}` })));
+})();
+
+// ---------- clusters tab: value-chain map
+const CM = (() => {
+  const NS = 'http://www.w3.org/2000/svg', svgEl = document.getElementById('cm-svg'), tipEl = document.getElementById('cm-tip');
+  const mk = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const nbr = {}; M.nodes.forEach(n => nbr[n.id] = { out: [], in: [] });
+  M.edges.forEach(([a, b]) => { nbr[a].out.push(b); nbr[b].in.push(a); });
+  const BX = Object.values(M.boxes), W = Math.max(...BX.map(b => b.x + b.w)), H = Math.max(...BX.map(b => b.y + b.h)), U = W / 900;
+  let view = 'chain', sel = null, selBox = null, q = '', hideLeaf = false, allLinks = false, built = false, vb = [-.12, -.6, W + .24, H + .75];
+  const NOTES = {
+    chain: 'Each company sits in the value-chain stage its products point to (CSIS figure, extended to AI systems). Ringed companies have no product profile and are placed by their trading partners. Colour = trading ecosystem.',
+    eco: 'Louvain communities of the supply graph: groups that trade mostly with each other. The recommender looks for similar companies across these.',
+    role: 'The product group with the most evidence behind it. Grey: no product profile in the graph.',
+    tier: 'Upstream / chips / downstream. Ringed: placed one step above its suppliers or below its customers.',
+    eto: 'Green: role or tier agrees with the CSET ETO Supply Chain Explorer; red: it differs; grey: ETO has no label (only 38 companies do).' };
+  let root, nodesG, linesG, predG, flowG, seqG, boxEls = [], flowEls = [], circles = [], lines = [], labels = [];
+  // production sequence of the CSIS figure: design -> fabrication -> assembly & test -> systems, inputs feed in from below
+  const SEQ = [['chips', 'fabrication', 'h'], ['fabrication', 'assembly_test', 'h'], ['assembly_test', 'systems_cloud', 'h'],
+    ['design_sw_ip', 'chips', 'v'], ['materials', 'fabrication', 'v'], ['equipment', 'fabrication', 'v'], ['components_ems', 'systems_cloud', 'v']];
+  const colour = n => {
+    if (view === 'chain' || view === 'eco') return n.eco == null ? NOCOL : ECO_PAL[n.eco % ECO_PAL.length];
+    if (view === 'role') return n.role ? ROLE_COL[n.role] : NOCOL;
+    if (view === 'tier') return n.tier ? TIER_COL[n.tier] : NOCOL;
+    if (!n.eto) return NOCOL; const ok = n.eto.role_ok ?? n.eto.tier_ok; return ok == null ? NOCOL : ok ? '#4cc283' : '#ff6b6b'; };
+  const HIDE = 'unknown_inputs';  // companies whose products are unknown: left out of the value-chain view
+  const target = n => view === 'chain' ? (n.cx == null || n.lane === HIDE ? null : [n.cx, n.cy, n.cr]) : [n.x, n.y, U * (3 + 2.2 * Math.sqrt(n.deg))];
+  const centre = k => ({ x: M.boxes[k].x + M.boxes[k].w / 2, y: M.boxes[k].y + M.boxes[k].h / 2 });
+  function edgePoint(b, tx, ty) { const cx = b.x + b.w / 2, cy = b.y + b.h / 2, dx = tx - cx, dy = ty - cy;
+    const k = Math.min(Math.abs((b.w / 2) / (dx || 1e-9)), Math.abs((b.h / 2) / (dy || 1e-9))); return [cx + dx * k, cy + dy * k]; }
+  function build() {
+    built = true;
+    const defs = mk('defs', {}, svgEl);
+    [['cm-arr', '#9aa3b2'], ['cm-arrp', '#a77bff'], ['cm-arrs', '#6f9be0']].forEach(([id, c]) => mk('path', { d: 'M0,0 L10,5 L0,10 z', fill: c },
+      mk('marker', { id, viewBox: '0 0 10 10', refX: 9, refY: 5, markerUnits: 'userSpaceOnUse', markerWidth: U * 11, markerHeight: U * 11, orient: 'auto' }, defs)));
+    root = mk('g', {}, svgEl); const boxG = mk('g', {}, root); seqG = mk('g', {}, root); flowG = mk('g', {}, root); linesG = mk('g', {}, root); predG = mk('g', {}, root); nodesG = mk('g', {}, root); const labG = mk('g', {}, root);
+    boxEls = Object.entries(M.boxes).filter(([k]) => k !== HIDE).map(([k, b]) => { const r = mk('rect', { x: b.x, y: b.y, width: b.w, height: b.h, rx: .02, fill: 'rgba(79,157,255,.06)', stroke: '#2f5f99', 'stroke-width': U * 1.2 }, boxG);
+      r.style.cursor = 'pointer'; r.addEventListener('click', ev => { ev.stopPropagation(); sel = null; selBox = selBox === k ? null : k; detail(); paint(); });
+      const t = mk('text', { x: b.x + .035, y: b.y + .075, 'font-size': U * 13, 'font-weight': 600, fill: '#9ec5ff', 'font-family': 'Segoe UI, -apple-system, Roboto, Arial, sans-serif' }, boxG);
+      t.textContent = `${b.label} · ${M.nodes.filter(n => n.lane === k).length}`; t.style.pointerEvents = 'none'; return { r, k }; });
+    flowEls = M.flows.filter(f => f.from !== f.to && f.from !== HIDE && f.to !== HIDE).map(f => { const A = M.boxes[f.from], B = M.boxes[f.to], ac = centre(f.from), bc = centre(f.to); let x1, y1, x2, y2, cx, cy;
+      if (Math.abs(A.y - B.y) < .01) { const span = Math.abs(bc.x - ac.x), dir = Math.sign(bc.x - ac.x);
+        x1 = ac.x + dir * A.w * .15; x2 = bc.x - dir * B.w * .15 + (dir > 0 ? .06 : -.06); y1 = y2 = A.y; cx = (x1 + x2) / 2; cy = A.y - .12 - .1 * span * (dir > 0 ? 1 : .6);
+      } else { [x1, y1] = edgePoint(A, bc.x, bc.y); [x2, y2] = edgePoint(B, ac.x, ac.y);
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, nx = -(y2 - y1), ny = x2 - x1, L = Math.hypot(nx, ny) || 1; cx = mx + nx / L * .08; cy = my + ny / L * .08; }
+      const path = mk('path', { d: `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`, fill: 'none', 'stroke-width': U * (1.5 + 1.2 * Math.sqrt(f.links)), 'marker-end': 'url(#cm-arr)', 'stroke-linecap': 'round' }, flowG);
+      const lx = .25 * x1 + .5 * cx + .25 * x2, ly = .25 * y1 + .5 * cy + .25 * y2;
+      const bg = mk('rect', { x: lx - U * 15, y: ly - U * 10, width: U * 30, height: U * 18, rx: U * 4, fill: '#161b24' }, flowG);
+      const t = mk('text', { x: lx, y: ly + U * 4, 'text-anchor': 'middle', 'font-size': U * 12, fill: '#e6e9ef', 'font-family': 'Cascadia Mono, Consolas, monospace' }, flowG); t.textContent = f.links;
+      return { path, bg, t, f }; });
+    SEQ.forEach(([a, b, o]) => { const A = M.boxes[a], B = M.boxes[b]; if (!A || !B) return; let x1, y1, x2, y2;
+      if (o === 'h') { y1 = y2 = A.y + A.h / 2; x1 = A.x + A.w + .035; x2 = B.x - .03; }
+      else { x1 = x2 = A.x + A.w / 2; y1 = A.y - .035; y2 = B.y + B.h + .03; }
+      const pth = mk('path', { d: `M${x1},${y1} L${x2},${y2}`, stroke: '#6f9be0', 'stroke-width': U * 7, 'stroke-linecap': 'round', 'marker-end': 'url(#cm-arrs)', opacity: .9 }, seqG);
+      const tt = mk('title', {}, pth); tt.textContent = `${M.boxes[a].label} → ${M.boxes[b].label} (production sequence, CSIS)`; });
+    lines = M.edges.map(([a, b]) => ({ l: mk('line', {}, linesG), a, b }));
+    circles = M.nodes.map(n => { const c = mk('circle', {}, nodesG); n.px = n.x; n.py = n.y;
+      c.style.cursor = 'pointer'; c.addEventListener('click', ev => { ev.stopPropagation(); sel = n.id; selBox = null; detail(); paint(); });
+      c.addEventListener('mousemove', ev => { const r = svgEl.parentNode.getBoundingClientRect();
+        tipEl.innerHTML = `<b>${esc(n.name)}</b><br>${n.deg} supply link${n.deg === 1 ? '' : 's'}${n.lane ? ' · ' + esc(LANE[n.lane]) : ''}`; tipEl.style.opacity = 1;
+        tipEl.style.left = Math.min(ev.clientX - r.left + 12, r.width - 230) + 'px'; tipEl.style.top = (ev.clientY - r.top + 12) + 'px'; });
+      c.addEventListener('mouseleave', () => tipEl.style.opacity = 0); return { c, n }; });
+    labels = M.nodes.filter(n => n.deg >= 8).map(n => { const t = mk('text', { 'font-family': 'Segoe UI, -apple-system, Roboto, Arial, sans-serif', fill: '#e6e9ef' }, labG); t.textContent = n.name; t.style.pointerEvents = 'none'; return { t, n }; });
+    svgEl.addEventListener('click', () => { sel = null; selBox = null; detail(); paint(); });
+    let drag = null;
+    svgEl.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, vb: [...vb] }; });
+    window.addEventListener('pointerup', () => drag = null);
+    svgEl.addEventListener('pointermove', e => { if (!drag) return; const r = svgEl.getBoundingClientRect(), k = Math.max(vb[2] / r.width, vb[3] / r.height);
+      vb[0] = drag.vb[0] - (e.clientX - drag.x) * k; vb[1] = drag.vb[1] - (e.clientY - drag.y) * k; setVB(); });
+    const zoomAt = (f, cx, cy) => { vb = [cx - (cx - vb[0]) * f, cy - (cy - vb[1]) * f, vb[2] * f, vb[3] * f]; setVB(); };
+    svgEl.addEventListener('wheel', e => { if (!(e.ctrlKey || e.metaKey)) return; e.preventDefault(); const r = svgEl.getBoundingClientRect(), k = Math.max(vb[2] / r.width, vb[3] / r.height);
+      zoomAt(e.deltaY > 0 ? 1.15 : 1 / 1.15, vb[0] + (e.clientX - r.left) * k, vb[1] + (e.clientY - r.top) * k); }, { passive: false });
+    document.getElementById('cm-zin').onclick = () => zoomAt(1 / 1.3, vb[0] + vb[2] / 2, vb[1] + vb[3] / 2);
+    document.getElementById('cm-zout').onclick = () => zoomAt(1.3, vb[0] + vb[2] / 2, vb[1] + vb[3] / 2);
+    document.getElementById('cm-zfit').onclick = () => { vb = [-.12, -.6, W + .24, H + .75]; setVB(); };
+    ['chain', 'eco', 'role', 'tier', 'eto'].forEach(v => document.getElementById('cm-v-' + v).addEventListener('click', () => setView(v)));
+    document.getElementById('cm-q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); paint(); });
+    document.getElementById('cm-leaf').addEventListener('change', e => { hideLeaf = e.target.checked; paint(); });
+    document.getElementById('cm-links').addEventListener('change', e => { allLinks = e.target.checked; paint(); });
+    document.getElementById('cm-pred').addEventListener('change', () => { detail(); paint(); });
+    pairs(); M.nodes.forEach(n => { const T = target(n); if (T) { n.px = T[0]; n.py = T[1]; } }); place(1); setVB(); detail(); paint();
+  }
+  function setVB() { svgEl.setAttribute('viewBox', vb.join(' ')); }
+  function place(t) {
+    circles.forEach(({ c, n }) => { const T = target(n); if (!T) { c.style.display = 'none'; n.vx = n.vy = null; return; }
+      const x = n.px + (T[0] - n.px) * t, y = n.py + (T[1] - n.py) * t; c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', T[2]); n.vx = x; n.vy = y; });
+    lines.forEach(({ l, a, b }) => { const A = mById[a], B = mById[b]; if (A.vx == null || B.vx == null) return; l.setAttribute('x1', A.vx); l.setAttribute('y1', A.vy); l.setAttribute('x2', B.vx); l.setAttribute('y2', B.vy); });
+    labels.forEach(({ t, n }) => { const show = view !== 'chain' && n.vx != null; t.style.display = show ? '' : 'none'; if (show) { t.setAttribute('x', n.vx + U * 9); t.setAttribute('y', n.vy + U * 4); t.setAttribute('font-size', U * 11); } });
+    drawPred();
+  }
+  function animate() { const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = performance.now(), dur = reduce ? 0 : 450;
+    const step = now => { const t = dur ? Math.min(1, (now - t0) / dur) : 1, e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; place(e);
+      if (t < 1) requestAnimationFrame(step); else M.nodes.forEach(n => { if (n.vx != null) { n.px = n.vx; n.py = n.vy; } }); }; requestAnimationFrame(step); }
+  function predList() { if (!sel || !document.getElementById('cm-pred').checked) return [];
+    return ['customers', 'suppliers', 'competitors'].flatMap(dir => recsOf(sel, dir).slice(0, RANK_N).map((r, k) => ({ dir, k, d: r[0] }))).filter(p => mById[p.d]); }
+  function drawPred() {
+    predG.innerHTML = '';
+    predList().forEach(p => { const A = mById[sel], B = mById[p.d]; if (A.vx == null || B.vx == null) return;
+      const comp = p.dir === 'competitors', [s, t] = p.dir === 'suppliers' ? [B, A] : [A, B];
+      const mx = (s.vx + t.vx) / 2, my = (s.vy + t.vy) / 2, nx = -(t.vy - s.vy), ny = t.vx - s.vx, L = Math.hypot(nx, ny) || 1;
+      const path = mk('path', { d: `M${s.vx},${s.vy} Q${mx + nx / L * .06},${my + ny / L * .06} ${t.vx},${t.vy}`, fill: 'none', stroke: comp ? '#ffa94d' : '#a77bff', 'stroke-width': U * 2,
+        'stroke-dasharray': comp ? `${U * 2} ${U * 4}` : `${U * 6} ${U * 4}`, 'stroke-linecap': 'round', ...(comp ? {} : { 'marker-end': 'url(#cm-arrp)' }) }, predG);
+      const tt = mk('title', {}, path); tt.textContent = comp ? `Predicted competitor: ${nm(t.id)} (rank ${p.k + 1})` : `Predicted: ${nm(s.id)} could supply ${nm(t.id)} (rank ${p.k + 1})`; });
+  }
+  function paint() {
+    const chain = view === 'chain', hi = sel ? new Set([sel, ...nbr[sel].out, ...nbr[sel].in, ...predList().map(p => p.d)]) : null;
+    const pkind = new Map(predList().map(p => [p.d, p.dir])), pset = pkind;
+    const match = q ? new Set(M.nodes.filter(n => n.name.toLowerCase().includes(q)).map(n => n.id)) : null;
+    seqG.style.display = chain && !selBox ? '' : 'none';
+    boxEls.forEach(({ r, k }) => { r.parentNode.style.display = chain ? '' : 'none'; r.setAttribute('stroke-width', U * (k === selBox ? 3 : 1.2)); });
+    flowEls.forEach(({ path, bg, t, f }) => { const on = chain && !sel && selBox && (f.from === selBox || f.to === selBox), out = f.from === selBox;
+      [path, bg, t].forEach(x => x.style.display = on ? '' : 'none'); path.setAttribute('stroke', out ? '#4f9dff' : '#4cc283'); path.style.opacity = .7;
+      bg.setAttribute('stroke', out ? '#4f9dff' : '#4cc283'); bg.setAttribute('stroke-width', U); });
+    circles.forEach(({ c, n }) => { const T = target(n); c.style.display = (!T || (hideLeaf && n.deg <= 1 && n.id !== sel && !pset.has(n.id))) ? 'none' : '';
+      const col = colour(n), hollow = ((view === 'tier' || chain) && n.placed_by && n.placed_by !== 'products') || (view === 'eto' && !n.eto);
+      c.setAttribute('fill', hollow ? '#0f141c' : col); c.setAttribute('stroke', pset.has(n.id) ? KIND_COL[pkind.get(n.id)] : hollow ? col : '#0f141c');
+      c.setAttribute('stroke-width', U * (pset.has(n.id) ? 2.5 : hollow ? 2 : 1));
+      let op = 1; if (hi && !hi.has(n.id)) op = .15; if (match && !match.has(n.id)) op = .12; if (view === 'eto' && !n.eto) op = Math.min(op, .35); c.style.opacity = op; });
+    lines.forEach(({ l, a, b }) => { const on = sel && (a === sel || b === sel), leaf = hideLeaf && (mById[a].deg <= 1 || mById[b].deg <= 1);
+      l.setAttribute('stroke', on ? 'rgba(79,157,255,.85)' : allLinks && chain ? (sel ? 'rgba(230,233,239,.06)' : 'rgba(158,197,255,.22)') : 'rgba(230,233,239,.10)'); l.setAttribute('stroke-width', U * (on ? 2 : 1.1));
+      l.style.display = (chain && !on && !allLinks) || (leaf && !on) || mById[a].vx == null || mById[b].vx == null ? 'none' : ''; });
+    document.getElementById('cm-note').textContent = NOTES[view]; legend(); drawPred();
+  }
+  function legend() {
+    const L = document.getElementById('cm-legend'), T = document.getElementById('cm-lgt'); L.innerHTML = '';
+    const it = (c, txt, hollow) => { const s = document.createElement('span'), i = document.createElement('i'); if (hollow) { i.className = 'hollow'; i.style.borderColor = c; } else i.style.background = c; s.append(i, document.createTextNode(txt)); L.appendChild(s); };
+    if (view === 'chain' || view === 'eco') { T.textContent = 'Ecosystems, largest first'; const cnt = {}; M.nodes.forEach(n => cnt[n.eco] = (cnt[n.eco] || 0) + 1);
+      Object.keys(cnt).sort((a, b) => a - b).forEach(k => { const top = M.nodes.filter(n => n.eco == k).sort((a, b) => b.deg - a.deg)[0]; it(ECO_PAL[k % ECO_PAL.length], `${cnt[k]} · ${top.name}`); });
+      if (view === 'chain') it('#9aa3b2', 'ring: placed by partners', true); }
+    if (view === 'role') { T.textContent = 'Role from products'; Object.entries(ROLE_COL).forEach(([k, c]) => it(c, k.replace(/_/g, ' '))); it(NOCOL, 'no product profile'); }
+    if (view === 'tier') { T.textContent = 'Tier'; Object.entries(TIER_COL).forEach(([k, c]) => { it(c, k); it(c, k + ', from partners', true); }); }
+    if (view === 'eto') { T.textContent = 'Compared with ETO'; it('#4cc283', 'agrees'); it('#ff6b6b', 'differs'); it(NOCOL, 'no ETO label', true); }
+    it('#a77bff', 'predicted customer / supplier', true); it('#ffa94d', 'predicted competitor', true);
+  }
+  function detail() {
+    const el = document.getElementById('cm-detail');
+    if (selBox) { const rows = d => M.flows.filter(f => (d === 'out' ? f.from : f.to) === selBox && f.from !== HIDE && f.to !== HIDE).map(f => `<li>${esc(LANE[d === 'out' ? f.to : f.from])} <span class="num" style="color:var(--muted)">${f.links}</span></li>`).join('') || '<li>none</li>';
+      const self = M.flows.find(f => f.from === selBox && f.to === selBox);
+      el.innerHTML = `<div class="label">Stage</div><div class="nm2">${esc(LANE[selBox])}</div><p class="cm-note">${M.nodes.filter(n => n.lane === selBox).length} companies${self ? `, ${self.links} supply links inside the stage` : ''}. Blue arrows: it supplies; green: it buys.</p>
+        <div class="label" style="margin-top:10px">Supplies to</div><ul>${rows('out')}</ul><div class="label" style="margin-top:10px">Buys from</div><ul>${rows('in')}</ul>`; return; }
+    if (!sel) { el.innerHTML = '<div class="label">Company</div><p class="cm-note">Click a company to see its partners, its cluster labels and its predicted partners.</p>'; return; }
+    const n = mById[sel], li = ids => ids.map(i => mById[i]).sort((a, b) => b.deg - a.deg).map(m => `<li>${esc(m.name)}</li>`).join('') || '<li>none</li>';
+    const preds = dir => recsOf(sel, dir).slice(0, RANK_N).map((r, k) => `<li><button class="nmb" data-cmpred="${predKey(dir, sel, k)}">${esc(nm(r[0]))}</button></li>`).join('') || '<li>none</li>';
+    const eto = n.eto ? `<div style="margin-top:6px"><span class="tag">ETO: ${esc(n.eto.eto_role.replace(/_/g, ' '))}${n.eto.eto_stage ? ', ' + esc(n.eto.eto_stage) : ''}</span></div>` : '';
+    el.innerHTML = `<div class="label">Company</div><div class="nm2">${esc(n.name)}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">${n.lane ? `<span class="p2tag">${esc(LANE[n.lane])}</span>` : ''}<span class="p2tag">ecosystem ${n.eco}</span>${n.role ? `<span class="p2tag">${esc(n.role.replace(/_/g, ' '))}</span>` : ''}</div>${eto}
+      <p class="cm-note">Makes: ${n.makes.length ? n.makes.map(x => esc(CATL(x))).join(', ') : 'no product profile'}</p>
+      <p style="margin:8px 0 0;display:flex;gap:14px"><button class="open" style="margin:0" data-cmopen="${sel}">Open in Explore</button><button class="open" style="margin:0" data-cmdash="${sel}">Financials &amp; profile</button></p>
+      <div class="label" style="margin-top:10px">Supplies to (${nbr[sel].out.length})</div><ul>${li(nbr[sel].out)}</ul>
+      <div class="label" style="margin-top:10px">Buys from (${nbr[sel].in.length})</div><ul>${li(nbr[sel].in)}</ul>
+      <div class="label" style="margin-top:10px;color:var(--pred-ink)">Predicted customers</div><ul>${preds('customers')}</ul>
+      <div class="label" style="margin-top:10px;color:var(--pred-ink)">Predicted suppliers</div><ul>${preds('suppliers')}</ul>
+      <div class="label" style="margin-top:10px;color:var(--comp)">Predicted competitors</div><ul>${preds('competitors')}</ul>`;
+  }
+  document.getElementById('cm-detail').addEventListener('click', ev => {
+    const o = ev.target.closest('[data-cmopen]'); if (o) { showTab('explore'); select(byId[o.dataset.cmopen]); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    const dd = ev.target.closest('[data-cmdash]'); if (dd) { DASH.open(byId[dd.dataset.cmdash], dd); return; }
+    const p = ev.target.closest('[data-cmpred]'); if (p) openPredDrawer(p.dataset.cmpred);
+  });
+  function pairs() {
+    const P = document.getElementById('cm-pairs'), out = [];
+    M.nodes.filter(n => n.prod != null).forEach(a => M.nodes.filter(b => b.prod === a.prod && b.id > a.id && b.eco !== a.eco).forEach(b => out.push([a, b])));
+    out.sort((p, r) => (r[0].deg + r[1].deg) - (p[0].deg + p[1].deg));
+    out.slice(0, 8).forEach(([a, b]) => { const btn = document.createElement('button'); btn.textContent = `${a.name} · ${b.name} (ecosystems ${a.eco} / ${b.eco})`;
+      btn.addEventListener('click', () => { setView('eco'); sel = a.id; selBox = null; detail(); paint(); }); P.appendChild(btn); });
+  }
+  function setView(v) { view = v; document.querySelectorAll('[id^="cm-v-"]').forEach(b => b.setAttribute('aria-pressed', b.id === 'cm-v-' + v)); paint(); animate(); }
+  return { show: () => { if (!built) build(); } };
+})();
+colLegend();
+@@@ replace .attr('x', r + 5).attr('y', 4).attr('fill', d.center ? '#242424' : '#424242')
+.attr('x', r + 5).attr('y', 4).attr('fill', d.center ? '#ffffff' : '#c9d1dc')
+@@@ replace .attr('paint-order', 'stroke').attr('stroke', '#fbfbfb').attr('stroke-width', 3.5);
+.attr('paint-order', 'stroke').attr('stroke', '#0f141c').attr('stroke-width', 3.5);
+@@@ replace const COL = { company: '#2a78d6', offer: '#1baf7a', place: '#eb6834', stage: '#8a8886' };
+const COL = { company: '#4f9dff', offer: '#3ddc97', place: '#ff8a50', stage: '#9aa3b2' };
+@@@ before   const t = ev.target.closest('[data-tool]'); if (t) { openTool(t.dataset.tool, current); return; }
+  const dsh = ev.target.closest('[data-dash]'); if (dsh) { DASH.open(current, dsh); return; }
+@@@ replace function select(i) { current = i; selEdge = null;
+function select(i) { current = i; selEdge = null; if (D.ents[i][1] === 0) DASH.company = i;
+@@@ before // ---------- clusters tab: value-chain map
+// ---------- company dashboard (Yahoo Finance snapshot via yfinance; the page itself calls no API)
+const DASH = (() => {
+  const FIN = P2.fin, el = () => document.getElementById('dash');
+  const st = { company: byName('company_001'), range: '5Y' };
+  const SYM = { USD: '$', EUR: '€', JPY: '¥', KRW: '₩', TWD: 'NT$', HKD: 'HK$', CNY: 'CN¥', GBP: '£', ILS: '₪' };
+  const money = (v, cur) => { if (v == null) return '—'; const a = Math.abs(v), s = SYM[cur] || (cur ? cur + ' ' : '');
+    const [d, u] = a >= 1e12 ? [1e12, 'T'] : a >= 1e9 ? [1e9, 'B'] : a >= 1e6 ? [1e6, 'M'] : [1, ''];
+    return `${v < 0 ? '−' : ''}${s}${(a / d).toLocaleString('en-US', { maximumFractionDigits: a / d >= 100 ? 0 : a / d >= 10 ? 1 : 2 })}${u}`; };
+  const pct = v => v == null ? '—' : `${(v * 100).toFixed(1)}%`;
+  const signed = v => v == null ? '—' : `<span class="${v >= 0 ? 'up' : 'down'}">${v >= 0 ? '+' : '−'}${Math.abs(v * 100).toFixed(1)}%</span>`;
+  const x1 = v => v == null ? '—' : `${v.toFixed(1)}×`;
+  const price = (v, cur) => v == null ? '—' : `${SYM[cur] || (cur ? cur + ' ' : '')}${v.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+  const tile = (lab, val, sub) => `<div class="tile"><span class="lab">${lab}</span><b>${val}</b>${sub ? `<span class="sub">${sub}</span>` : ''}</div>`;
+  function kgPanel(c) {
+    const cid = D.ents[c][5], m = mById[cid], cus = [], sup = [];
+    adj[c].forEach(i => { const e = D.edges[i]; if (RN(i) !== 'SUPPLIES_TO') return; if (e[0] === c) cus.push(e[1]); else if (e[1] === c) sup.push(e[0]); });
+    const top = l => l.sort((a, b) => deg[b] - deg[a]).slice(0, 6).map(i => `<button class="nmb" data-dopen="${i}">${esc(D.ents[i][0])}</button>`).join(', ') || 'none in the graph';
+    const pr = dir => recsOf(cid, dir).slice(0, 5).map((r, k) => `<button class="nmb" data-dpred="${predKey(dir, cid, k)}" style="color:var(--pred-ink)">${esc(nm(r[0]))}</button>`).join(', ') || '—';
+    return `<div class="panel"><h2 style="font-size:16px">In the knowledge graph</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${m && m.lane ? `<span class="p2tag">${esc(LANE[m.lane])}</span>` : ''}${m && m.eco != null ? `<span class="p2tag">ecosystem ${m.eco}</span>` : ''}${m && m.role ? `<span class="p2tag">${esc(m.role.replace(/_/g, ' '))}</span>` : ''}<span class="tag">${deg[c]} relations</span></div>
+      ${m && m.makes.length ? `<p class="cm-note">Makes: ${m.makes.map(x => esc(CATL(x))).join(', ')}</p>` : ''}
+      <div class="label" style="margin-top:12px">Customers (${cus.length})</div><p class="cm-note" style="margin-top:2px">${top(cus)}</p>
+      <div class="label" style="margin-top:10px">Suppliers (${sup.length})</div><p class="cm-note" style="margin-top:2px">${top(sup)}</p>
+      <div class="label" style="margin-top:10px;color:var(--pred-ink)">Predicted customers</div><p class="cm-note" style="margin-top:2px">${pr('customers')}</p>
+      <div class="label" style="margin-top:10px;color:var(--pred-ink)">Predicted suppliers</div><p class="cm-note" style="margin-top:2px">${pr('suppliers')}</p>
+      <div class="label" style="margin-top:10px;color:var(--comp)">Predicted competitors</div><p class="cm-note" style="margin-top:2px">${pr('competitors')}</p></div>`;
+  }
+  function render() {
+    const c = st.company; if (c == null) return;
+    const cid = D.ents[c][5], ent = D.ents[c], f = FIN && FIN.companies[cid], inf = (f && f.info) || {};
+    document.getElementById('sheet-title').textContent = ent[0];
+    const yurl = ent[2] ? `https://finance.yahoo.com/quote/${encodeURIComponent(ent[2])}/` : null;
+    const src = FIN ? `${esc(FIN.source)} · snapshot ${esc(FIN.as_of || '')}` : 'No market-data snapshot loaded';
+    let head = `<div class="panel" style="margin-bottom:16px"><div class="dash-head"><div class="dash-id"><h2>${esc(inf.longName || ent[0])}</h2>
+      <div class="meta">${ent[2] ? `<span><b>${esc(ent[2])}</b>${inf.fullExchangeName || inf.exchange ? ' · ' + esc(inf.fullExchangeName || inf.exchange) : ''}</span>` : '<span>No ticker in the graph</span>'}
+      ${inf.sector ? `<span>${esc(inf.sector)}${inf.industry ? ' · ' + esc(inf.industry) : ''}</span>` : ''}${inf.country ? `<span>${esc(inf.city ? inf.city + ', ' : '')}${esc(inf.country)}</span>` : ''}
+      ${inf.fullTimeEmployees ? `<span>${fmt(inf.fullTimeEmployees)} employees</span>` : ''}${inf.website ? `<span><a href="${esc(inf.website)}" target="_blank" rel="noopener">${esc(inf.website.replace(/^https?:\/\//, ''))}</a></span>` : ''}</div></div>
+      <div class="dash-src">${yurl ? `<a class="extlink" href="${yurl}" target="_blank" rel="noopener">More on Yahoo Finance ↗</a>` : ''}<div style="margin-top:6px">${src}</div></div></div></div>`;
+    if (!ent[2]) { el().innerHTML = head + `<p class="res-sum">Market data is only available for the 50 source companies, which have tickers in the graph.</p>` + kgPanel(c); return; }
+    if (!f || f.error) { el().innerHTML = head + `<p class="res-sum">${FIN ? `No market data for ${esc(ent[2])} in the snapshot${f && f.error ? ' (Yahoo returned an error)' : ''}.` : 'Market data has not been loaded into this page yet.'} Use the Yahoo Finance link for live figures.</p>` + kgPanel(c); return; }
+    const cur = inf.currency, fcur = inf.financialCurrency || cur, px = inf.currentPrice ?? inf.regularMarketPrice;
+    const lo = inf.fiftyTwoWeekLow, hi = inf.fiftyTwoWeekHigh, pos = (px != null && lo != null && hi > lo) ? Math.max(0, Math.min(1, (px - lo) / (hi - lo))) : null;
+    const tiles = `<div class="tiles" style="margin-bottom:16px">
+      ${tile('Share price', price(px, cur), lo != null ? `52-week ${price(lo, cur)} – ${price(hi, cur)}${pos != null ? `<span class="rng" style="display:block"><i style="left:calc(${(pos * 100).toFixed(1)}% - 1px)"></i></span>` : ''}` : '')}
+      ${tile('Market cap', money(inf.marketCap, cur), inf.enterpriseValue ? `Enterprise value ${money(inf.enterpriseValue, cur)}` : '')}
+      ${tile('P/E', x1(inf.trailingPE), `Forward ${x1(inf.forwardPE)}${inf.trailingPegRatio ? ` · PEG ${inf.trailingPegRatio.toFixed(2)}` : ''}`)}
+      ${tile('Revenue growth', signed(inf.revenueGrowth), 'Latest quarter, year on year')}
+      ${tile('Earnings growth', signed(inf.earningsGrowth), 'Latest quarter, year on year')}
+      ${tile('EV / EBITDA', x1(inf.enterpriseToEbitda), `P/S ${x1(inf.priceToSalesTrailing12Months)} · P/B ${x1(inf.priceToBook)}`)}
+      ${tile('Return on equity', pct(inf.returnOnEquity), `Debt / equity ${inf.debtToEquity != null ? inf.debtToEquity.toFixed(0) + '%' : '—'}`)}
+      ${tile('Dividend yield', pct(inf.trailingAnnualDividendYield ?? (inf.dividendYield != null ? inf.dividendYield / 100 : null)), inf.beta != null ? `Beta ${inf.beta.toFixed(2)}` : '')}</div>`;
+    const marg = [['Gross', inf.grossMargins], ['Operating', inf.operatingMargins], ['EBITDA', inf.ebitdaMargins], ['Net', inf.profitMargins]];
+    const margHtml = marg.map(([l, v]) => `<div class="mbar"><span>${l}</span><span class="t">${v != null ? `<i class="${v < 0 ? 'neg' : ''}" style="width:${Math.min(100, Math.abs(v) * 100)}%"></i>` : ''}</span><span class="v">${pct(v)}</span></div>`).join('');
+    const yrs = (f.annual || []).filter(r => r['Total Revenue'] != null).slice().reverse();
+    const yoy = (k, i) => i > 0 && yrs[i - 1][k] ? (yrs[i][k] - yrs[i - 1][k]) / Math.abs(yrs[i - 1][k]) : null;
+    const annRow = (k, l) => `<tr><td>${l}</td>${yrs.map(r => `<td>${money(r[k], fcur)}</td>`).join('')}</tr>`;
+    const annual = yrs.length ? `<table class="ann"><thead><tr><th>Fiscal year ending</th>${yrs.map(r => `<th>${esc(r.period_end.slice(0, 7))}</th>`).join('')}</tr></thead><tbody>
+      ${annRow('Total Revenue', 'Revenue')}<tr><td style="color:var(--muted)">Revenue growth</td>${yrs.map((r, i) => `<td>${signed(yoy('Total Revenue', i))}</td>`).join('')}</tr>
+      ${annRow('Gross Profit', 'Gross profit')}${annRow('Operating Income', 'Operating income')}${annRow('Net Income', 'Net income')}
+      <tr><td style="color:var(--muted)">Net margin</td>${yrs.map(r => `<td>${r['Net Income'] != null ? pct(r['Net Income'] / r['Total Revenue']) : '—'}</td>`).join('')}</tr>
+      ${yrs.some(r => r['Research And Development'] != null) ? annRow('Research And Development', 'R&amp;D') : ''}</tbody></table>
+      <p class="cap">Reported annual figures in ${esc(fcur || '')}; growth and net margin are calculated from them.</p>` : '<p class="empty">No annual statements in the snapshot.</p>';
+    el().innerHTML = head + tiles + `<div class="dgrid"><div class="panel"><div class="panel-h"><h2>Share price (weekly close, ${esc(cur || '')})</h2>
+        <span class="rangebtn" role="group" aria-label="Range">${['1Y', '3Y', '5Y'].map(r => `<button data-rng="${r}" aria-pressed="${r === st.range}">${r}</button>`).join('')}</span></div>
+        <div style="position:relative"><svg id="pxchart" role="img" aria-label="Share price"></svg><div class="pxtip" id="pxtip"></div></div></div>
+      <div class="panel"><h2 style="font-size:16px">Margins (trailing 12 months)</h2>${margHtml}
+        <div class="label" style="margin-top:14px">Analysts</div><p class="cm-note" style="margin-top:2px">${inf.targetMeanPrice ? `Mean target ${price(inf.targetMeanPrice, cur)}` : 'No target'}${inf.recommendationKey ? ` · ${esc(inf.recommendationKey.replace(/_/g, ' '))}` : ''}${inf.numberOfAnalystOpinions ? ` · ${inf.numberOfAnalystOpinions} analysts` : ''}</p></div></div>
+      <div class="dgrid" style="margin-top:16px"><div class="panel"><h2 style="font-size:16px">Annual results</h2>${annual}</div>${kgPanel(c)}</div>`;
+    chart(f.prices || [], cur);
+  }
+  function chart(prices, cur) {
+    const svgN = document.getElementById('pxchart'); if (!svgN) return;
+    const cut = { '1Y': 1, '3Y': 3, '5Y': 5 }[st.range], last = prices.length ? new Date(prices[prices.length - 1][0]) : null;
+    const from = last ? new Date(last.getFullYear() - cut, last.getMonth(), last.getDate()) : null;
+    const pts = prices.map(([d, v]) => [new Date(d), v]).filter(([d]) => !from || d >= from);
+    const W = svgN.getBoundingClientRect().width || 700, H = 300, m = { l: 56, r: 14, t: 12, b: 26 };
+    const g = d3.select(svgN).attr('viewBox', `0 0 ${W} ${H}`); g.selectAll('*').remove();
+    if (pts.length < 2) { g.append('text').attr('x', 20).attr('y', 30).attr('fill', '#8590a1').text('No price history in the snapshot.'); return; }
+    const x = d3.scaleTime().domain(d3.extent(pts, p => p[0])).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain(d3.extent(pts, p => p[1])).nice().range([H - m.b, m.t]);
+    const up = pts[pts.length - 1][1] >= pts[0][1], col = up ? '#3ddc97' : '#ff7a7a';
+    const defs = g.append('defs'), gr = defs.append('linearGradient').attr('id', 'pxg').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+    gr.append('stop').attr('offset', '0%').attr('stop-color', col).attr('stop-opacity', .28); gr.append('stop').attr('offset', '100%').attr('stop-color', col).attr('stop-opacity', 0);
+    g.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(-(W - m.l - m.r)).tickFormat(v => price(v, cur)))
+      .call(a => a.select('.domain').remove()).call(a => a.selectAll('line').attr('stroke', '#243042')).call(a => a.selectAll('text').attr('fill', '#8590a1'));
+    g.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(6).tickSizeOuter(0))
+      .call(a => a.select('.domain').attr('stroke', '#344155')).call(a => a.selectAll('line').attr('stroke', '#344155')).call(a => a.selectAll('text').attr('fill', '#8590a1'));
+    g.append('path').datum(pts).attr('fill', 'url(#pxg)').attr('d', d3.area().x(p => x(p[0])).y0(H - m.b).y1(p => y(p[1])));
+    g.append('path').datum(pts).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2).attr('d', d3.line().x(p => x(p[0])).y(p => y(p[1])));
+    const lp = pts[pts.length - 1]; g.append('circle').attr('cx', x(lp[0])).attr('cy', y(lp[1])).attr('r', 4).attr('fill', col).attr('stroke', '#0f141c').attr('stroke-width', 2);
+    const chg = (lp[1] - pts[0][1]) / pts[0][1];
+    g.append('text').attr('x', W - m.r).attr('y', m.t + 12).attr('text-anchor', 'end').attr('fill', col).attr('font-size', 13).attr('font-weight', 600)
+      .text(`${chg >= 0 ? '+' : '−'}${Math.abs(chg * 100).toFixed(0)}% over ${st.range}`);
+    const cross = g.append('line').attr('stroke', '#8590a1').attr('stroke-dasharray', '3 3').attr('y1', m.t).attr('y2', H - m.b).style('opacity', 0);
+    const dot = g.append('circle').attr('r', 4).attr('fill', col).style('opacity', 0), tipN = document.getElementById('pxtip'), bis = d3.bisector(p => p[0]).center;
+    g.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', ev => { const [mx] = d3.pointer(ev), p = pts[bis(pts, x.invert(mx))]; cross.attr('x1', x(p[0])).attr('x2', x(p[0])).style('opacity', 1);
+        dot.attr('cx', x(p[0])).attr('cy', y(p[1])).style('opacity', 1); tipN.style.opacity = 1; tipN.innerHTML = `${p[0].toISOString().slice(0, 10)} · <b>${price(p[1], cur)}</b>`;
+        const r = svgN.getBoundingClientRect(); tipN.style.left = Math.min(x(p[0]) / W * r.width + 10, r.width - 170) + 'px'; tipN.style.top = '8px'; })
+      .on('mouseleave', () => { cross.style('opacity', 0); dot.style('opacity', 0); tipN.style.opacity = 0; });
+  }
+  document.getElementById('dash').addEventListener('click', ev => {
+    const r = ev.target.closest('[data-rng]'); if (r) { st.range = r.dataset.rng; document.querySelectorAll('[data-rng]').forEach(b => b.setAttribute('aria-pressed', b === r));
+      const f = FIN && FIN.companies[D.ents[st.company][5]]; chart((f && f.prices) || [], f && f.info && f.info.currency); return; }
+    const o = ev.target.closest('[data-dopen]'); if (o) { const i = +o.dataset.dopen; if (D.ents[i][1] === 0) { open(i); return; } close(); showTab('explore'); select(i); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    const p = ev.target.closest('[data-dpred]'); if (p) { close(); openPredDrawer(p.dataset.dpred); }
+  });
+  // side sheet: opens over any tab, Esc / backdrop / × close it, focus returns to what opened it
+  const sheet = document.getElementById('sheet'), bg = document.getElementById('sheet-bg'); let opener = null;
+  function open(i, from) {
+    if (i == null) return; st.company = i; if (from) opener = from;
+    const was = !sheet.hidden; sheet.hidden = bg.hidden = false; document.body.classList.add('sheet-open');
+    requestAnimationFrame(() => sheet.classList.add('in')); render(); sheet.scrollTop = 0;
+    if (!was) document.getElementById('sheet-x').focus({ preventScroll: true });
+  }
+  function close() {
+    if (sheet.hidden) return; sheet.classList.remove('in'); document.body.classList.remove('sheet-open');
+    setTimeout(() => { sheet.hidden = bg.hidden = true; }, 180); if (opener && opener.focus) opener.focus({ preventScroll: true }); opener = null;
+  }
+  document.getElementById('sheet-x').addEventListener('click', close);
+  bg.addEventListener('click', close);
+  document.getElementById('sheet-explore').addEventListener('click', () => { const i = st.company; close(); showTab('explore'); select(i); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && !sheet.hidden) close(); });
+  let rt; window.addEventListener('resize', () => { if (sheet.hidden) return; clearTimeout(rt); rt = setTimeout(render, 150); });
+  return { render, open, close, get company() { return st.company; }, set company(v) { st.company = v; } };
+})();
+@@@ after   return { show: () => { if (!built) build(); } };\n})();
+
+// ---------- Ask the graph: question -> JSON plan -> run on this graph (JavaScript copy of src/kg/qa.py)
+const QA = (() => {
+  const Q = P2.qa || { examples: [], prompt: ['', ''] };
+  const RELS = ['SUPPLIES_TO', 'PROVIDES', 'USES', 'PARTNERS_WITH', 'SUBSIDIARY_OF', 'LOCATED_IN', 'OPERATES_IN'];
+  const LANES = Object.keys(P2.lanes).filter(k => k !== 'unknown_inputs');
+  const OUT = {}, INN = {};
+  RELS.forEach(r => { OUT[r] = new Map(); INN[r] = new Map(); });
+  const put = (m, k, v) => { if (!m.has(k)) m.set(k, new Set()); m.get(k).add(v); };
+  D.edges.forEach(e => { const r = R[e[2]]; if (OUT[r]) { put(OUT[r], e[0], e[1]); put(INN[r], e[1], e[0]); } });
+  const nb = (x, rel, d) => d === 'out' ? [...(OUT[rel].get(x) || [])] : d === 'in' ? [...(INN[rel].get(x) || [])]
+    : [...new Set([...(OUT[rel].get(x) || []), ...(INN[rel].get(x) || [])])];
+  const links = (x, by) => (by === 'customers' ? OUT : INN).SUPPLIES_TO.get(x)?.size || 0;
+
+  // entity linking: normalised names and aliases, ties to the entity with more relations, then fuzzy
+  const SUFF = new Set(['inc', 'corp', 'corporation', 'co', 'ltd', 'limited', 'plc', 'holdings', 'holding', 'company', 'llc', 'sa', 'ag', 'nv', 'se', 'the', 'incorporated', 'kk', 'bv', 'gmbh']);
+  const norm = s => { const w = String(s).toLowerCase().replace(/&/g, ' and ').replace(/'s/g, ' ').replace(/[^a-z0-9぀-鿿]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+    const k = w.filter(x => !SUFF.has(x)); return (k.length ? k : w).join(' '); };
+  const idx = new Map();
+  D.ents.forEach((e, i) => [e[0], ...(e[3] || [])].forEach(n => { const k = norm(n); if (!k) return; if (!idx.has(k)) idx.set(k, []); idx.get(k).push(i); }));
+  idx.forEach(v => v.sort((a, b) => deg[b] - deg[a] || a - b));
+  const keys = [...idx.keys()];
+  const lev = (a, b) => { if (Math.abs(a.length - b.length) > 6) return 99; let p = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) { const c = [i]; for (let j = 1; j <= b.length; j++) c[j] = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); p = c; } return p[b.length]; };
+  function link(name) {
+    const k = norm(name); if (idx.has(k)) return idx.get(k)[0];
+    let best = null, bs = 0;
+    keys.forEach(x => { const s = 1 - lev(k, x) / Math.max(k.length, x.length); if (s > bs) { bs = s; best = x; } });
+    return bs >= 0.88 ? idx.get(best)[0] : null;
+  }
+
+  class PlanError extends Error {}
+  const asSet = (p, w) => { const v = ev(p); if (!(v instanceof Set) && !Array.isArray(v)) throw new PlanError(`${w}: expected a set of nodes`); return new Set(v); };
+  const one = (p, w) => { const s = asSet(p, w); if (s.size !== 1) throw new PlanError(`${w}: expected one entity`); return [...s][0]; };
+  function hops(a, b, limit = 6) {
+    const dist = new Map([[a, 0]]), q = [a];
+    while (q.length) { const x = q.shift(); if (x === b) return dist.get(x);
+      if (dist.get(x) < limit) nb(x, 'SUPPLIES_TO', 'out').sort((u, v) => u - v).forEach(y => { if (!dist.has(y)) { dist.set(y, dist.get(x) + 1); q.push(y); } }); }
+    return null;
+  }
+  function ev(p) {
+    if (!p || typeof p !== 'object' || !p.op) throw new PlanError('not an operator');
+    const op = p.op;
+    if (op === 'entity') { const i = link(p.name || ''); if (i == null) throw new PlanError(`unknown entity: “${p.name}”`); return new Set([i]); }
+    if (op === 'neighbors') { const d = p.dir || 'out'; if (!RELS.includes(p.rel) || !['out', 'in', 'both'].includes(d)) throw new PlanError('neighbors: bad rel/dir');
+      const s = new Set(); asSet(p.of, op).forEach(x => nb(x, p.rel, d).forEach(y => s.add(y))); return s; }
+    if (op === 'within') { const rel = p.rel || 'SUPPLIES_TO', d = p.dir || 'out', h = +(p.hops || 1);
+      if (!RELS.includes(rel) || h < 1 || h > 3) throw new PlanError('within: bad arguments');
+      const start = asSet(p.of, op), seen = new Set(start); let fr = new Set(start);
+      for (let k = 0; k < h; k++) { const nx = new Set(); fr.forEach(x => nb(x, rel, d).forEach(y => { if (!seen.has(y)) { seen.add(y); nx.add(y); } })); fr = nx; }
+      start.forEach(x => seen.delete(x)); return seen; }
+    if (op === 'intersect' || op === 'union' || op === 'minus') { const a = (p.args || []).map(x => asSet(x, op)); if (a.length < 2) throw new PlanError(`${op}: needs two args`);
+      return a.slice(1).reduce((acc, s) => new Set(op === 'union' ? [...acc, ...s] : [...acc].filter(x => op === 'intersect' ? s.has(x) : !s.has(x))), a[0]); }
+    if (op === 'lane') { if (!LANES.includes(p.lane)) throw new PlanError(`unknown lane “${p.lane}”`);
+      return new Set(M.nodes.filter(n => n.lane === p.lane && byId[n.id] != null).map(n => byId[n.id])); }
+    if (op === 'count') return asSet(p.of, op).size;
+    if (op === 'top') { const by = p.by || 'customers'; if (!['customers', 'suppliers'].includes(by)) throw new PlanError('top: by customers or suppliers');
+      return [...asSet(p.of, op)].sort((a, b) => links(b, by) - links(a, by) || D.ents[a][0].localeCompare(D.ents[b][0])).slice(0, +(p.k || 5)); }
+    if (op === 'exists') { const rel = p.rel || 'SUPPLIES_TO'; return nb(one(p.from, op), rel, 'out').includes(one(p.to, op)); }
+    if (op === 'hops') return hops(one(p.from, op), one(p.to, op));
+    if (op === 'sells') { const a = one(p.from, op), b = one(p.to, op);
+      if (!nb(a, 'SUPPLIES_TO', 'out').includes(b)) throw new PlanError(`no stated supply link from ${D.ents[a][0]} to ${D.ents[b][0]}`);
+      const f = SOLD[`${D.ents[a][5]}|${D.ents[b][5]}`]; return { sells: f ? f[0] : [], a, b }; }
+    if (op === 'trades') { const pc = productCat(String(p.product || '')); if (!pc.cat) throw new PlanError(`cannot place “${p.product}” in a product category`);
+      const sup = p.from ? asSet(p.from, op) : null, cus = p.to ? asSet(p.to, op) : null, out = [];
+      Object.entries(SOLD).forEach(([k, f]) => { const [ai, bi] = k.split('|').map(x => byId[x]); if (ai == null || bi == null) return;
+        if (!(pc.item != null ? [...f[0], ...f[1]] : f[0]).includes(pc.cat)) return;
+        if (sup && !sup.has(ai)) return; if (cus && !cus.has(bi)) return;
+        if (pc.item != null && !(OUT.PROVIDES.get(ai) || new Set()).has(pc.item)) return; out.push([ai, bi, pc.cat]); });
+      return { trades: out.sort((x, y) => deg[y[0]] - deg[x[0]] || deg[y[1]] - deg[x[1]]), cat: pc.cat, item: pc.item }; }
+    if (op === 'unsupported') throw new PlanError('the planner could not express this question with the graph operators');
+    throw new PlanError(`unknown operator “${op}”`);
+  }
+  // product name or category -> category (items are categorised by the page copy of their category, from the data)
+  const ITEMCAT = P2.itemcat || {};
+  function productCat(name) {
+    const n = name.trim().toLowerCase();
+    const c = Object.keys(P2.cats).find(k => n === k || n === k.replace(/_/g, ' ') || n === String(P2.cats[k]).toLowerCase());
+    if (c) return { cat: c, item: null };
+    const i = link(name); if (i != null && D.ents[i][1] !== 0 && ITEMCAT[D.ents[i][5]]) return { cat: ITEMCAT[D.ents[i][5]], item: i };
+    return { cat: null, item: null };
+  }
+  const run = plan => { const v = ev(plan); return v instanceof Set ? [...v].sort((a, b) => deg[b] - deg[a]) : v; };
+
+  // pattern parser (baseline planner, no LLM): the 12 benchmark phrasings
+  const en = a => ({ op: 'entity', name: a }), nbp = (a, rel, dir) => ({ op: 'neighbors', of: en(a), rel, dir });
+  const LP = { chip: 'chips', foundry: 'fabrication', 'assembly and test': 'assembly_test', 'systems, cloud and devices': 'systems_cloud', 'design software and ip': 'design_sw_ip', 'materials and chemicals': 'materials', equipment: 'equipment', 'components and ems': 'components_ems' };
+  const T = [
+    [/^who supplies (.+?)\?$/i, a => nbp(a, 'SUPPLIES_TO', 'in')],
+    [/^which companies does (.+?) supply\?$/i, a => nbp(a, 'SUPPLIES_TO', 'out')],
+    [/^what does (.+?) provide\?$/i, a => nbp(a, 'PROVIDES', 'out')],
+    [/^which companies provide (.+?)\?$/i, a => nbp(a, 'PROVIDES', 'in')],
+    [/^who does (.+?) partner with\?$/i, a => nbp(a, 'PARTNERS_WITH', 'both')],
+    [/^which companies supply the suppliers of (.+?)\?$/i, a => ({ op: 'minus', args: [{ op: 'neighbors', of: nbp(a, 'SUPPLIES_TO', 'in'), rel: 'SUPPLIES_TO', dir: 'in' }, en(a)] })],
+    [/^which companies are within two supply steps downstream of (.+?)\?$/i, a => ({ op: 'within', of: en(a), rel: 'SUPPLIES_TO', dir: 'out', hops: 2 })],
+    [/^which suppliers do (.+?) and (.+?) have in common\?$/i, (a, b) => ({ op: 'intersect', args: [nbp(a, 'SUPPLIES_TO', 'in'), nbp(b, 'SUPPLIES_TO', 'in')] })],
+    [/^how many customers does (.+?) have\?$/i, a => ({ op: 'count', of: nbp(a, 'SUPPLIES_TO', 'out') })],
+    [/^does (.+?) supply (.+?)\?$/i, (a, b) => ({ op: 'exists', from: en(a), rel: 'SUPPLIES_TO', to: en(b) })],
+    [/^which (.+?) company has the most (customers|suppliers)\?$/i, (l, by) => ({ op: 'top', of: { op: 'lane', lane: LP[l.toLowerCase()] || l }, by: by.toLowerCase(), k: 1 })],
+    [/^how many supply steps separate (.+?) from (.+?)\?$/i, (a, b) => ({ op: 'hops', from: en(a), to: en(b) })],
+  ];
+  // looser phrasings for the page (the benchmark baseline in qa.py keeps only the 12 above)
+  const X = [
+    [/^(?:who are |list |show(?: me)? |what are )?(?:the )?suppliers (?:of|to|for) (.+?)\?$/i, a => nbp(a, 'SUPPLIES_TO', 'in')],
+    [/^(?:who are |list |show(?: me)? |what are )?(.+?)['’]s suppliers\?$/i, a => nbp(a, 'SUPPLIES_TO', 'in')],
+    [/^(?:who|which companies) does (.+?) (?:buy from|source from)\?$/i, a => nbp(a, 'SUPPLIES_TO', 'in')],
+    [/^(?:who|which companies) (?:does|do) (.+?) (?:supply|sell to|serve)\?$/i, a => nbp(a, 'SUPPLIES_TO', 'out')],
+    [/^(?:who are |list |show(?: me)? |what are )?(?:the )?customers of (.+?)\?$/i, a => nbp(a, 'SUPPLIES_TO', 'out')],
+    [/^(?:who are |list |show(?: me)? |what are )?(.+?)['’]s customers\?$/i, a => nbp(a, 'SUPPLIES_TO', 'out')],
+    [/^who buys from (.+?)\?$/i, a => nbp(a, 'SUPPLIES_TO', 'out')],
+    [/^what does (.+?) (?:make|sell|produce|offer|manufacture)\?$/i, a => nbp(a, 'PROVIDES', 'out')],
+    [/^what does (.+?) use\?$/i, a => nbp(a, 'USES', 'out')],
+    [/^(?:who|which companies|which firms) (?:make|makes|provide|provides|sell|sells|produce|produces|manufacture|manufactures) (.+?)\?$/i, a => nbp(a, 'PROVIDES', 'in')],
+    [/^(?:who are |list |what are )?(?:the )?partners of (.+?)\?$/i, a => nbp(a, 'PARTNERS_WITH', 'both')],
+    [/^where is (.+?) (?:based|headquartered|located)\?$/i, a => nbp(a, 'LOCATED_IN', 'out')],
+    [/^(?:what are )?(?:the )?subsidiaries of (.+?)\?$/i, a => nbp(a, 'SUBSIDIARY_OF', 'in')],
+    [/^(?:who|what) owns (.+?)\?$/i, a => nbp(a, 'SUBSIDIARY_OF', 'out')],
+    [/^(?:what are )?(?:the )?common suppliers of (.+?) and (.+?)\?$/i, (a, b) => ({ op: 'intersect', args: [nbp(a, 'SUPPLIES_TO', 'in'), nbp(b, 'SUPPLIES_TO', 'in')] })],
+    [/^how many suppliers does (.+?) have\?$/i, a => ({ op: 'count', of: nbp(a, 'SUPPLIES_TO', 'in') })],
+    [/^(?:does|is) (.+?) (?:sell to|a supplier (?:of|to|for)) (.+?)\?$/i, (a, b) => ({ op: 'exists', from: en(a), rel: 'SUPPLIES_TO', to: en(b) })],
+    [/^how (?:is|are) (.+?) connected to (.+?)\?$/i, (a, b) => ({ op: 'hops', from: en(a), to: en(b) })],
+    [/^who (?:depends on|is downstream of) (.+?)\?$/i, a => ({ op: 'within', of: en(a), rel: 'SUPPLIES_TO', dir: 'out', hops: 2 })],
+    [/^what does (.+?) (?:sell|supply|provide) to (.+?)\?$/i, (a, b) => ({ op: 'sells', from: en(a), to: en(b) })],
+    [/^(?:who sells|who supplies|who provides) (.+?) to whom\?$/i, x => ({ op: 'trades', product: x })],
+    [/^who sells (.+?) to (.+?)\?$/i, (x, b) => ({ op: 'trades', product: x, to: en(b) })],
+  ];
+  const templatePlan = (q, loose) => { q = q.trim().replace(/\s+/g, ' '); if (!q.endsWith('?')) q += '?';
+    for (const [re, f] of (loose ? [...T, ...X.slice(-3), ...X.slice(0, -3)] : T)) { const m = q.match(re); if (m) return f(...m.slice(1)); } return { op: 'unsupported' }; };
+
+  const parsePlan = t => { t = String(t).trim().replace(/^```(?:json)?\s*|\s*```$/g, ''); try { return JSON.parse(t); } catch (e) { const m = t.match(/\{[\s\S]*\}/); if (!m) throw new PlanError('the planner replied without a plan'); return JSON.parse(m[0]); } };
+
+  // Cypher equivalent, for reading (the page runs the plan itself; there is no database behind it)
+  function cypher(plan) {
+    let n = 0; const nv = () => `n${n++}`, q = s => `'${String(s).replace(/'/g, "\\'")}'`;
+    const arrow = (rel, d, star = '') => d === 'out' ? `-[:${rel}${star}]->` : d === 'in' ? `<-[:${rel}${star}]-` : `-[:${rel}${star}]-`;
+    function pat(p, force) {  // -> {m: pattern, v: final variable, where: []}
+      if (p.op === 'entity') { const v = force || nv(); return { m: `(${v} {name: ${q(p.name)}})`, v, where: [] }; }
+      if (p.op === 'lane') { const v = force || nv(); return { m: `(${v}:Company {lane: ${q(p.lane)}})`, v, where: [] }; }
+      if (p.op === 'neighbors') { const i = pat(p.of), v = force || nv(); return { m: `${i.m}${arrow(p.rel, p.dir || 'out')}(${v})`, v, where: i.where }; }
+      if (p.op === 'within') { const i = pat(p.of), v = force || nv(); return { m: `${i.m}${arrow(p.rel || 'SUPPLIES_TO', p.dir || 'out', `*1..${p.hops || 1}`)}(${v})`, v, where: [...i.where, `${v} <> ${i.v}`] }; }
+      if (p.op === 'minus' && p.args[1] && p.args[1].op === 'entity') { const i = pat(p.args[0], force); return { ...i, where: [...i.where, `${i.v}.name <> ${q(p.args[1].name)}`] }; }
+      if (p.op === 'minus') { const i = pat(p.args[0], force), o = pat(p.args[1], i.v); return { ...i, where: [...i.where, `NOT EXISTS { MATCH ${o.m} }`] }; }
+      if (p.op === 'intersect') { const v = force || 'x', ps = p.args.map(a => pat(a, v)); return { m: ps.map(x => x.m).join(',\n      '), v, where: ps.flatMap(x => x.where) }; }
+      throw new Error('no Cypher form');
+    }
+    const W = w => w.length ? `\nWHERE ${w.join(' AND ')}` : '';
+    try {
+      if (plan.op === 'count') { const x = pat(plan.of); return `MATCH ${x.m}${W(x.where)}\nRETURN count(DISTINCT ${x.v})`; }
+      if (plan.op === 'top') { const x = pat(plan.of), r = plan.by === 'suppliers' ? `<-[:SUPPLIES_TO]-()` : `-[:SUPPLIES_TO]->()`;
+        return `MATCH ${x.m}${W(x.where)}\nWITH DISTINCT ${x.v}, COUNT { (${x.v})${r} } AS links\nRETURN ${x.v}.name ORDER BY links DESC LIMIT ${plan.k || 5}`; }
+      if (plan.op === 'exists') return `MATCH (a {name: ${q(plan.from.name)}}), (b {name: ${q(plan.to.name)}})\nRETURN EXISTS { (a)-[:${plan.rel || 'SUPPLIES_TO'}]->(b) }`;
+      if (plan.op === 'sells') return `MATCH (a {name: ${q(plan.from.name)}})-[:SUPPLIES_TO]->(b {name: ${q(plan.to.name)}}),\n      (a)-[:PROVIDES]->(p)\nWHERE p.category IN b.buys   // b.buys: categories b uses or gets from its other suppliers\nRETURN DISTINCT p.category`;
+      if (plan.op === 'trades') return `MATCH (a:Company)-[:SUPPLIES_TO]->(b:Company), (a)-[:PROVIDES]->(p {category: ${q(plan.product)}})\nWHERE p.category IN b.buys\nRETURN a.name, b.name`;
+      if (plan.op === 'hops') return `MATCH p = shortestPath((a {name: ${q(plan.from.name)}})-[:SUPPLIES_TO*..6]->(b {name: ${q(plan.to.name)}}))\nRETURN length(p)`;
+      const x = pat(plan); return `MATCH ${x.m}${W(x.where)}\nRETURN DISTINCT ${x.v}.name`;
+    } catch (e) { return '— (no direct Cypher form for this plan)'; }
+  }
+
+  // ---- chat UI: floating button + panel, available on every tab
+  const $ = id => document.getElementById(id);
+  const fab = $('ask-fab'), box = $('ask'), log = $('ask-log'), inp = $('ask-q');
+  let sample = null, busy = false, claudeState = 'connecting';
+  const planner = () => document.querySelector('input[name=ask-pl]:checked').value;
+  function mode() {
+    const live = planner() === 'claude' && sample, m = $('ask-mode');
+    m.classList.toggle('live', !!live);
+    m.lastChild.textContent = live ? 'Claude' : planner() === 'claude' && claudeState === 'connecting' ? 'connecting…' : 'patterns only';
+    $('ask-claude-note').textContent = sample ? '' : claudeState === 'connecting' ? '(connecting…)' : '(only when this page is open in claude.ai)';
+    document.querySelector('input[name=ask-pl][value=claude]').disabled = !sample && claudeState !== 'connecting';
+  }
+  // window.claude may appear after the page script runs: wait for it, then ask for the "sample" capability
+  (function wait(t0) {
+    if (window.claude && window.claude.use) { window.claude.use('sample').then(s => { sample = s || null; claudeState = s ? 'ok' : 'none'; if (!s) fallback(); mode(); }).catch(() => { claudeState = 'none'; fallback(); mode(); }); return; }
+    if (performance.now() - t0 > 10000) { claudeState = 'none'; fallback(); mode(); return; }
+    setTimeout(() => wait(t0), 250);
+  })(performance.now());
+  function fallback() { if (!sample) document.querySelector('input[name=ask-pl][value=template]').checked = true; }
+  document.querySelectorAll('input[name=ask-pl]').forEach(r => r.addEventListener('change', mode));
+  mode();
+
+  // starter questions: phrased so both planners understand them, about companies people know
+  const SUGG = ['Who supplies Apple?', 'What does TSMC sell to NVIDIA?', 'Who sells EUV lithography systems to whom?', 'Which equipment company has the most customers?', 'How many supply steps separate ASML from Apple?'];
+  function empty() {
+    log.innerHTML = `<div class="ask-empty"><p style="margin:0">Ask who supplies whom, who sells what to whom, or how two companies are connected. Answers come from the graph only, and each one shows how it was found.</p>
+      <div class="label" style="margin-top:12px">Try</div><div class="sugg">${SUGG.map((x, k) => `<button data-sugg="${k}">${esc(x)}</button>`).join('')}</div></div>`;
+  }
+  empty();
+  const scroll = () => { log.scrollTop = log.scrollHeight; };
+  const add = html => { const d = document.createElement('div'); d.innerHTML = html; const el = d.firstElementChild; log.appendChild(el); scroll(); return el; };
+  const ent = i => `<button class="qa-ent" data-qaopen="${i}" title="${D.ents[i][1] === 0 ? 'Company profile' : 'Show in graph'}">${esc(D.ents[i][0])}</button>`;
+  function answer(v) {
+    if (v === null) return '<p style="margin:0">Not connected in the graph (no supply path within 6 steps).</p>';
+    if (typeof v === 'boolean') return `<div class="big">${v ? 'Yes' : 'No'}</div><div class="listnote">${v ? 'A relation stated in the sources.' : 'No such relation in the graph, which is not proof it does not exist.'}</div>`;
+    if (typeof v === 'number') return `<div class="big">${v}</div>`;
+    if (v && v.sells) return v.sells.length ? `<div class="listnote">${esc(D.ents[v.a][0])} → ${esc(D.ents[v.b][0])}, most likely</div><div>${v.sells.map(c => `<span class="tagc">${esc(CATL(c))}</span>`).join('')}</div><div class="listnote" style="margin-top:6px">Inferred from what ${esc(D.ents[v.a][0])} makes and ${esc(D.ents[v.b][0])} needs; the sources state only that the link exists.</div>`
+      : `<p style="margin:0">The link exists, but the graph does not say enough to tell what flows along it.</p>`;
+    if (v && v.trades) return v.trades.length ? `<div class="listnote">${v.trades.length} supply link${v.trades.length > 1 ? 's' : ''} carrying ${v.item != null ? `${esc(D.ents[v.item][0])} (${esc(CATL(v.cat))})` : esc(CATL(v.cat))}, inferred</div><ul class="flows">${v.trades.slice(0, 25).map(([a, b]) => `<li>${ent(a)} → ${ent(b)}</li>`).join('')}</ul>${v.trades.length > 25 ? `<div class="listnote">+${v.trades.length - 25} more</div>` : ''}`
+      : `<p style="margin:0">No stated supply link carries ${esc(CATL(v.cat))} as far as the graph can tell.</p>`;
+    if (!v.length) return '<p style="margin:0">Nothing in the graph.</p>';
+    return `<div class="listnote">${v.length} result${v.length > 1 ? 's' : ''}, most connected first</div><div class="qa-ents">${v.slice(0, 40).map(ent).join('')}${v.length > 40 ? ` <span class="listnote">+${v.length - 40} more</span>` : ''}</div>`;
+  }
+  const howTo = by => `<details><summary>How this was answered · plan by ${esc(by)}</summary>`;
+  function reply(plan, by, ms, holder) {
+    let body, ok = true;
+    try { body = answer(run(plan)); } catch (e) { ok = false; body = `<p class="err" style="margin:0">${esc(e.message)}</p>`; }
+    const hint = !ok && plan.op === 'unsupported' ? `<p class="listnote" style="margin:6px 0 0">${planner() === 'template' || !sample ? 'Without the LLM only set phrasings work, for example “Who supplies TSMC?”, “Customers of ASML”, “What does Lam Research make?”.' : 'Try naming a company or product and the relation you want.'}</p>` : '';
+    const html = `<div class="msg-a">${body}${hint}${howTo(by + (ms ? ` · ${(ms / 1000).toFixed(1)} s` : ''))}<div class="label" style="margin-top:6px">Query plan (what the page runs)</div><pre>${esc(JSON.stringify(plan, null, 1))}</pre>
+      <div class="label" style="margin-top:6px">Equivalent Cypher</div><pre>${esc(cypher(plan))}</pre></details></div>`;
+    if (holder) { holder.outerHTML = html; scroll(); } else add(html);
+  }
+  async function ask(question, cached) {
+    question = question.trim(); if (!question || busy) return;
+    if (log.querySelector('.ask-empty')) log.innerHTML = '';
+    add(`<div class="msg-u">${esc(question)}</div>`); inp.value = '';
+    if (cached) { reply(cached.plan, `${cached.model} (replayed from the evaluation)`); return; }
+    if (planner() === 'claude' && sample) {
+      busy = true; const wait = add('<div class="msg-a typing">Writing the query plan…</div>'), t0 = performance.now();
+      try { const r = await sample(Q.prompt[0] + question + Q.prompt[1], { modelTier: 'quick', cache: true }); reply(parsePlan(r.text), 'Claude', performance.now() - t0, wait); }
+      catch (e) {
+        wait.outerHTML = `<div class="msg-a"><p class="err" style="margin:0">${esc(e.code === 'not_granted' ? 'Claude is not available on this page, so I switched to patterns.' : e.code === 'rate_limited' ? 'Too many questions at once. Wait a moment and try again.' : (e.message || 'The planner failed.'))}</p></div>`;
+        if (e.code === 'not_granted') { sample = null; claudeState = 'none'; fallback(); mode(); }
+      } finally { busy = false; }
+      return;
+    }
+    reply(templatePlan(question, true), 'the pattern parser');
+  }
+  function openAsk() { box.hidden = false; fab.setAttribute('aria-expanded', 'true'); inp.focus(); }
+  function closeAsk() { box.hidden = true; fab.setAttribute('aria-expanded', 'false'); fab.focus(); }
+  fab.addEventListener('click', openAsk);
+  $('ask-x').addEventListener('click', closeAsk);
+  $('ask-cfg').addEventListener('click', () => { const p = $('ask-cfgp'); p.hidden = !p.hidden; $('ask-cfg').setAttribute('aria-expanded', String(!p.hidden)); });
+  $('ask-form').addEventListener('submit', ev => { ev.preventDefault(); ask(inp.value); });
+  box.addEventListener('keydown', ev => { if (ev.key === 'Escape' && document.getElementById('sheet').hidden) closeAsk(); });
+  log.addEventListener('click', ev => {
+    const s = ev.target.closest('[data-sugg]'); if (s) { ask(SUGG[+s.dataset.sugg]); return; }
+    const b = ev.target.closest('[data-qaopen]'); if (!b) return; const i = +b.dataset.qaopen;
+    if (D.ents[i][1] === 0) DASH.open(i, b); else { showTab('explore'); select(i); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  });
+  return { run, templatePlan, cypher, link, ask, open: openAsk };
+})();
+@@@ replace <button class="open" data-i="${o}">open</button>${e[9] ? ' <span class="conf conf-LOW">conflict</span>' : ''}</td>
+<button class="open" data-i="${o}">open</button>${e[9] ? ' <span class="conf conf-LOW">conflict</span>' : ''}${soldTag(i)}</td>
+@@@ replace \n    <ol class="claims">${cl.map(
+${soldBlock(i)}
+    <ol class="claims">${cl.map(
+@@@ before // ---------- Phase 2: clusters, predicted relations
+// ---------- who sells what to whom (inferred per stated supply link; products.edge_products)
+const SOLD = (P2.sold && P2.sold.links) || {};
+const soldOf = i => { const e = D.edges[i]; return R[e[2]] === 'SUPPLIES_TO' ? SOLD[`${D.ents[e[0]][5]}|${D.ents[e[1]][5]}`] : null; };
+function soldTag(i) {
+  const f = soldOf(i); if (!f) return '';
+  return ` <span class="sold" title="Inferred: what the supplier makes that the buyer needs. Click the row for the reasoning.">${esc(CATL(f[0][0]))}${f[0].length > 1 ? ` +${f[0].length - 1}` : ''}</span>`;
+}
+function soldBlock(i) {
+  const f = soldOf(i), e = D.edges[i]; if (R[e[2]] !== 'SUPPLIES_TO') return '';
+  const A = esc(D.ents[e[0]][0]), B = esc(D.ents[e[1]][0]);
+  if (!f) return `<div class="soldbox"><div class="label">What flows along this link</div><p class="cm-note" style="margin:4px 0 0">Not inferable: the graph does not say enough about what ${A} makes or what ${B} needs.</p></div>`;
+  const line = c => `<li><b>${esc(CATL(c))}</b>${(f[2][c] || []).length ? ` · ${A} provides ${f[2][c].map(x => `<i>${esc(x)}</i>`).join(', ')}` : ''}${(f[3][c] || []).length ? `; ${B} ${f[3][c].map(esc).join(', ')}` : ''}</li>`;
+  return `<div class="soldbox"><div class="label">What flows along this link · inferred</div>
+    <ul>${f[0].map(line).join('')}</ul>${f[1].length ? `<p class="cm-note" style="margin:4px 0 0">Also possible, outside ${A}'s main products: ${f[1].map(c => esc(CATL(c))).join(', ')}.</p>` : ''}
+    <p class="cm-note" style="margin:6px 0 0">Matched by product category, judged without this link itself. Not stated in the sources.</p></div>`;
+}
+@@@ after   return { show: () => { if (!built) build(); } };\n})();\n
+(() => { const E = P2.qa && P2.qa.eval, box = document.getElementById('qa-eval-panel'); if (!box) return; if (!E) { box.hidden = true; return; }
+  const R = E.runs, llm = Object.keys(R).find(k => k.startsWith('llm') && k.endsWith('/paraphrase')), pct = x => `${(x * 100).toFixed(1)}%`;
+  const ci = v => `<span class="num" style="color:var(--muted);font-size:12px"> (${pct(v.ci95[0])}–${pct(v.ci95[1])})</span>`;
+  const G = ['one-hop', 'multi-hop', 'set', 'aggregate', 'boolean'];
+  const mc = E.mcnemar[`template/paraphrase vs ${llm}`];
+  document.getElementById('qa-cap').innerHTML = `${R[llm].n} questions the planner prompt was never developed on (12 question types, every company or product name linked to the graph), each asked twice: in the benchmark's fixed wording and reworded by a second model (${esc(E.models.paraphrase)}). The answer is right only if the plan, run on the graph, returns exactly the expected set, number or yes/no.`;
+  document.getElementById('qa-tbl').innerHTML = `<thead><tr><th>Planner</th><th>Fixed wording</th><th>Reworded</th>${G.map(g => `<th>${g}</th>`).join('')}</tr></thead><tbody>
+    <tr><td>Pattern parser (no LLM)</td><td class="num">${pct(R['template/question'].accuracy)}</td><td class="num">${pct(R['template/paraphrase'].accuracy)}${ci(R['template/paraphrase'])}</td>${G.map(g => `<td class="num">${pct(R['template/paraphrase'].by_group[g] || 0)}</td>`).join('')}</tr>
+    <tr><td><b>LLM planner</b> (${esc(E.models.planner)})</td><td class="num">—</td><td class="num"><b>${pct(R[llm].accuracy)}</b>${ci(R[llm])}</td>${G.map(g => `<td class="num">${pct(R[llm].by_group[g] || 0)}</td>`).join('')}</tr></tbody>`;
+  document.getElementById('qa-note2').innerHTML = `Group columns are accuracy on reworded questions; 95% Wilson intervals in brackets. On the same questions the LLM planner was right where the parser was wrong ${mc.only_second_correct} times and the reverse ${mc.only_first_correct} times (McNemar p ${mc.p_value < 0.001 ? '< 0.001' : '= ' + mc.p_value}). Of its 6 misses, 4 follow rewordings that blur the question (“supply chain partners”, “tier-2 suppliers of …”), 2 are its own errors. The pattern parser is 100% on the fixed wording only because it was written for it. The prompt was developed on a separate set of 119 questions.`;
+})();
+(() => { const el = document.getElementById('sold-cap'), S = P2.sold; if (!el || !S) return;
+  el.innerHTML = `<b>${S.labelled} of ${S.total}</b> stated supply links (${Math.round(S.labelled / S.total * 100)}%) get a product label: the supplier's main product categories that the buyer is known to need, judged without the link itself. The other ${S.total - S.labelled} stay unlabelled because the graph does not say what the supplier makes or what the buyer needs. Where both are known, the match holds for 161 of 161 links (leave-one-out), while only about 12% of all company pairs would match, so a label is informative rather than automatic.`; })();

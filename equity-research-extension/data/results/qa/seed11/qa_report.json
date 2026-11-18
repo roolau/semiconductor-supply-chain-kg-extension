@@ -1,0 +1,108 @@
+{
+ "seed": 11,
+ "excluded": {},
+ "models": {
+  "paraphrase": "gemini-3.5-flash-lite",
+  "planner": "openai/gpt-oss-120b"
+ },
+ "llm-v2/paraphrase": {
+  "n": 113,
+  "accuracy": 0.947,
+  "ci95": [
+   0.889,
+   0.975
+  ],
+  "mean_f1": 0.95,
+  "errors": 0,
+  "by_group": {
+   "aggregate": 1.0,
+   "boolean": 1.0,
+   "multi-hop": 0.833,
+   "one-hop": 0.98,
+   "set": 1.0
+  },
+  "by_type": {
+   "common_suppliers": 1.0,
+   "count_customers": 1.0,
+   "customers": 1.0,
+   "downstream_2": 0.9,
+   "exists": 1.0,
+   "hops": 1.0,
+   "partners": 1.0,
+   "providers_of": 1.0,
+   "provides": 0.9,
+   "suppliers": 1.0,
+   "suppliers_of_suppliers": 0.6,
+   "top_in_lane": 1.0
+  }
+ },
+ "template/paraphrase": {
+  "n": 113,
+  "accuracy": 0.018,
+  "ci95": [
+   0.005,
+   0.062
+  ],
+  "mean_f1": 0.018,
+  "errors": 111,
+  "by_group": {
+   "aggregate": 0.0,
+   "boolean": 0.1,
+   "multi-hop": 0.033,
+   "one-hop": 0.0,
+   "set": 0.0
+  },
+  "by_type": {
+   "common_suppliers": 0.0,
+   "count_customers": 0.0,
+   "customers": 0.0,
+   "downstream_2": 0.0,
+   "exists": 0.1,
+   "hops": 0.1,
+   "partners": 0.0,
+   "providers_of": 0.0,
+   "provides": 0.0,
+   "suppliers": 0.0,
+   "suppliers_of_suppliers": 0.0,
+   "top_in_lane": 0.0
+  }
+ },
+ "template/question": {
+  "n": 113,
+  "accuracy": 1.0,
+  "ci95": [
+   0.967,
+   1.0
+  ],
+  "mean_f1": 1.0,
+  "errors": 0,
+  "by_group": {
+   "aggregate": 1.0,
+   "boolean": 1.0,
+   "multi-hop": 1.0,
+   "one-hop": 1.0,
+   "set": 1.0
+  },
+  "by_type": {
+   "common_suppliers": 1.0,
+   "count_customers": 1.0,
+   "customers": 1.0,
+   "downstream_2": 1.0,
+   "exists": 1.0,
+   "hops": 1.0,
+   "partners": 1.0,
+   "providers_of": 1.0,
+   "provides": 1.0,
+   "suppliers": 1.0,
+   "suppliers_of_suppliers": 1.0,
+   "top_in_lane": 1.0
+  }
+ },
+ "mcnemar": {
+  "template/paraphrase vs llm-v2/paraphrase": {
+   "only_first_correct": 0,
+   "only_second_correct": 105,
+   "p_value": 0.0
+  }
+ }
+}

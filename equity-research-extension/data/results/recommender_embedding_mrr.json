@@ -1,0 +1,10 @@
+{
+ "customers": {
+  "embedding": 0.138,
+  "hybrid": 0.259
+ },
+ "suppliers": {
+  "embedding": 0.19,
+  "hybrid": 0.326
+ }
+}

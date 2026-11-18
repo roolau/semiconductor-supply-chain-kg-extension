@@ -1,0 +1,13 @@
+numpy
+scipy
+networkx>=3.0
+pandas
+# KGQA benchmark (run_qa.ipynb)
+google-genai
+openai
+# market data (run_finance.ipynb)
+yfinance
+# tests
+pytest
+# optional: KG embeddings in run_modules.ipynb
+# pykeen
